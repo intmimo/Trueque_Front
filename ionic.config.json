@@ -1,0 +1,7 @@
+{
+  "name": "TruequeFront",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
