@@ -4,10 +4,72 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">registro</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <form [formGroup]="registroForm" (ngSubmit)="registrarse()">
+    <!-- Nombre -->
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input formControlName="nombre"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="isFieldInvalid('nombre')">
+      El nombre es obligatorio.
+    </ion-note>
+
+    <!-- Email -->
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="email" formControlName="email"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="isFieldInvalid('email')">
+      Debes ingresar un correo válido.
+    </ion-note>
+
+    <!-- Contraseña -->
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input type="password" formControlName="password"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="isFieldInvalid('password')">
+      La contraseña es obligatoria (mínimo 8 caracteres).
+    </ion-note>
+
+    <!-- Confirmar contraseña -->
+    <ion-item>
+      <ion-label position="floating">Confirmar Contraseña</ion-label>
+      <ion-input type="password" formControlName="confirmarPassword"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="registroForm.touched && registroForm.errors?.['noCoinciden']">
+      Las contraseñas no coinciden.
+    </ion-note>
+
+    <!-- Colonia -->
+    <ion-item>
+      <ion-label position="floating">Colonia</ion-label>
+      <ion-input formControlName="colonia"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="isFieldInvalid('colonia')">
+      La colonia es obligatoria.
+    </ion-note>
+
+    <!-- Municipio -->
+    <ion-item>
+      <ion-label position="floating">Municipio</ion-label>
+      <ion-input formControlName="municipio"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="isFieldInvalid('municipio')">
+      El municipio es obligatorio.
+    </ion-note>
+
+    <!-- Botón de registro -->
+    <ion-button
+      expand="full"
+      type="submit"
+      [disabled]="!registroForm.valid">
+      Registrarse
+    </ion-button>
+
+    <ion-button expand="full" fill="clear" routerLink="/login">
+      ¿Ya tienes cuenta? Inicia sesión
+    </ion-button>
+  </form>
 </ion-content>
