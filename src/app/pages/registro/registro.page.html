@@ -37,6 +37,7 @@
     <ion-item>
       <ion-label position="floating">Confirmar Contraseña</ion-label>
       <ion-input type="password" formControlName="confirmarPassword"></ion-input>
+    <!-- se llama la funcion escrita en el ts -->
     </ion-item>
     <ion-note color="danger" *ngIf="registroForm.touched && registroForm.errors?.['noCoinciden']">
       Las contraseñas no coinciden.
@@ -68,7 +69,7 @@
       Registrarse
     </ion-button>
 
-    <ion-button expand="full" fill="clear" routerLink="/login">
+    <ion-button expand="full" fill="clear" (click)="irALogin()">
       ¿Ya tienes cuenta? Inicia sesión
     </ion-button>
   </form>

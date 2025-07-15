@@ -41,6 +41,11 @@ export class LoginPage implements OnInit {
     }
   }
 
+  //funcion para ir a pantalla de registro
+  irARegistro(){
+    this.router.navigate(['/registro']);
+  }
+
   ngOnInit() {
   }
 

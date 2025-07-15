@@ -44,6 +44,7 @@ export class RegistroPage implements OnInit {
     return pass === confirm ? null : { noCoinciden: true };
   }
 
+  //funcion para el boton, si los campos son validos redirige a login
   registrarse() {
     if (this.registroForm.invalid) return;
 
@@ -55,6 +56,10 @@ export class RegistroPage implements OnInit {
   isFieldInvalid(campo: string): boolean {
     const control = this.registroForm.get(campo);
     return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  irALogin(){
+    this.router.navigate(['/login']);
   }
 
   ngOnInit() {}
