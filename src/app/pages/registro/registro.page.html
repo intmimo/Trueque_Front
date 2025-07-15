@@ -1,76 +1,151 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>registro</ion-title>
+  <ion-toolbar class="header-gradient-green">
+    <ion-title class="header-title">Registro</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <form [formGroup]="registroForm" (ngSubmit)="registrarse()">
-    <!-- Nombre -->
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input formControlName="nombre"></ion-input>
-    </ion-item>
-    <ion-note color="danger" *ngIf="isFieldInvalid('nombre')">
-      El nombre es obligatorio.
-    </ion-note>
+<ion-content class="registro-content">
+  <div class="registro-container">
+    <div class="form-wrapper">
+      <!-- Título principal -->
+      <div class="welcome-section">
+        <h2 class="welcome-title">Crear cuenta</h2>
+        <p class="welcome-subtitle">Únete a nuestra comunidad</p>
+      </div>
 
-    <!-- Email -->
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" formControlName="email"></ion-input>
-    </ion-item>
-    <ion-note color="danger" *ngIf="isFieldInvalid('email')">
-      Debes ingresar un correo válido.
-    </ion-note>
+      <!-- Formulario con tarjeta -->
+      <div class="form-card">
+        <form [formGroup]="registroForm" (ngSubmit)="registrarse()" class="registro-form">
 
-    <!-- Contraseña -->
-    <ion-item>
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" formControlName="password"></ion-input>
-    </ion-item>
-    <ion-note color="danger" *ngIf="isFieldInvalid('password')">
-      La contraseña es obligatoria (mínimo 8 caracteres).
-    </ion-note>
+          <!-- Campo Nombre -->
+          <div class="form-group">
+            <ion-item class="form-item" lines="none">
+              <ion-label position="floating" class="form-label">Nombre</ion-label>
+              <ion-input
+                formControlName="nombre"
+                class="form-input"
+                placeholder="Tu nombre completo">
+              </ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="isFieldInvalid('nombre')" class="error-message">
+              El nombre es obligatorio.
+            </ion-note>
+          </div>
 
-    <!-- Confirmar contraseña -->
-    <ion-item>
-      <ion-label position="floating">Confirmar Contraseña</ion-label>
-      <ion-input type="password" formControlName="confirmarPassword"></ion-input>
-    <!-- se llama la funcion escrita en el ts -->
-    </ion-item>
-    <ion-note color="danger" *ngIf="registroForm.touched && registroForm.errors?.['noCoinciden']">
-      Las contraseñas no coinciden.
-    </ion-note>
+          <!-- Campo Email -->
+          <div class="form-group">
+            <ion-item class="form-item" lines="none">
+              <ion-label position="floating" class="form-label">Email</ion-label>
+              <ion-input
+                type="email"
+                formControlName="email"
+                class="form-input"
+                placeholder="tu@email.com">
+              </ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="isFieldInvalid('email')" class="error-message">
+              Debes ingresar un correo válido.
+            </ion-note>
+          </div>
 
-    <!-- Colonia -->
-    <ion-item>
-      <ion-label position="floating">Colonia</ion-label>
-      <ion-input formControlName="colonia"></ion-input>
-    </ion-item>
-    <ion-note color="danger" *ngIf="isFieldInvalid('colonia')">
-      La colonia es obligatoria.
-    </ion-note>
+          <!-- Campo Contraseña -->
+          <div class="form-group">
+            <ion-item class="form-item" lines="none">
+              <ion-label position="floating" class="form-label">Contraseña</ion-label>
+              <ion-input
+                type="password"
+                formControlName="password"
+                class="form-input"
+                placeholder="••••••••">
+              </ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="isFieldInvalid('password')" class="error-message">
+              La contraseña es obligatoria (mínimo 8 caracteres).
+            </ion-note>
+          </div>
 
-    <!-- Municipio -->
-    <ion-item>
-      <ion-label position="floating">Municipio</ion-label>
-      <ion-input formControlName="municipio"></ion-input>
-    </ion-item>
-    <ion-note color="danger" *ngIf="isFieldInvalid('municipio')">
-      El municipio es obligatorio.
-    </ion-note>
+          <!-- Campo Confirmar contraseña -->
+          <div class="form-group">
+            <ion-item class="form-item" lines="none">
+              <ion-label position="floating" class="form-label">Confirmar Contraseña</ion-label>
+              <ion-input
+                type="password"
+                formControlName="confirmarPassword"
+                class="form-input"
+                placeholder="••••••••">
+              </ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="registroForm.touched && registroForm.errors?.['noCoinciden']" class="error-message">
+              Las contraseñas no coinciden.
+            </ion-note>
+          </div>
 
-    <!-- Botón de registro -->
-    <ion-button
-      expand="full"
-      type="submit"
-      [disabled]="!registroForm.valid">
-      Registrarse
-    </ion-button>
+          <!-- Sección de ubicación -->
+          <div class="location-section">
+            <h3 class="section-title">
+              <span class="title-indicator"></span>
+              Información de ubicación
+            </h3>
 
-    <ion-button expand="full" fill="clear" (click)="irALogin()">
-      ¿Ya tienes cuenta? Inicia sesión
-    </ion-button>
-  </form>
+            <!-- Campo Colonia -->
+            <div class="form-group">
+              <ion-item class="form-item" lines="none">
+                <ion-label position="floating" class="form-label">Colonia</ion-label>
+                <ion-input
+                  formControlName="colonia"
+                  class="form-input"
+                  placeholder="Nombre de tu colonia">
+                </ion-input>
+              </ion-item>
+              <ion-note color="danger" *ngIf="isFieldInvalid('colonia')" class="error-message">
+                La colonia es obligatoria.
+              </ion-note>
+            </div>
+
+            <!-- Campo Municipio -->
+            <div class="form-group">
+              <ion-item class="form-item" lines="none">
+                <ion-label position="floating" class="form-label">Municipio</ion-label>
+                <ion-input
+                  formControlName="municipio"
+                  class="form-input"
+                  placeholder="Nombre de tu municipio">
+                </ion-input>
+              </ion-item>
+              <ion-note color="danger" *ngIf="isFieldInvalid('municipio')" class="error-message">
+                El municipio es obligatorio.
+              </ion-note>
+            </div>
+          </div>
+
+          <!-- Botón de registro -->
+          <div class="button-group">
+            <ion-button
+              expand="full"
+              type="submit"
+              [disabled]="!registroForm.valid"
+              class="registro-button">
+              <span class="button-text">Registrarse</span>
+            </ion-button>
+          </div>
+
+          <!-- Divisor -->
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">o</span>
+          </div>
+
+          <!-- Botón de login -->
+          <ion-button
+            expand="full"
+            fill="clear"
+            (click)="irALogin()"
+            class="login-button">
+            <span class="login-text">¿Ya tienes cuenta? <span class="login-link">Inicia sesión</span></span>
+          </ion-button>
+        </form>
+      </div>
+
+    </div>
+  </div>
 </ion-content>
