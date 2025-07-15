@@ -32,12 +32,15 @@ export class LoginPage implements OnInit {
 
   //funcion para iniciar sesion e ir a tabs
   login() {
-    const { email, password } = this.loginForm.value;
+    if (this.loginForm.invalid) return; //valida antes de usar los datos
+    const {email, password} = this.loginForm.value;
     const success = this.authService.login(email, password);
-    if (success) {
-      this.router.navigate(['/tabs']);
+
+    if(success){
+      this.router.navigate(['/tabs']); //redirige a las tabs
     } else {
-      alert('Credenciales incorrectas');
+      //alerta si hay algo incorrecto
+      alert('Credenciales incorrectas')
     }
   }
 

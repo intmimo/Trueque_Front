@@ -28,10 +28,11 @@ export class AuthService {
     return false;
   }
 
+  //muestra que el usuario esta deslogueadao en el localstorage
   logout() {
     localStorage.removeItem('logueado');
   }
-
+  //muestra que el usuario esta logueadao en el localstorage
   isLoggedIn(): boolean {
     return !!localStorage.getItem('logueado');
   }
