@@ -8,12 +8,12 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'login',//se quita el module por el standalone
-    loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage)
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
   },
   {
-    path: 'registro',//se quita el module por el standalone
-    loadComponent: () => import('./pages/registro/registro.page').then(m => m.RegistroPage)
+    path: 'registro',
+    loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroPageModule)
   },
   {
     path: 'tabs',
