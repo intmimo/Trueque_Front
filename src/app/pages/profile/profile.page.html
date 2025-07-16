@@ -1,0 +1,58 @@
+<ion-content class="ion-padding background">
+
+  <!-- TARJETA DE USUARIO -->
+  <div class="user-card">
+    <ion-avatar class="avatar">
+      <img [src]="user.photo || 'https://via.placeholder.com/100'" alt="Foto de perfil">
+    </ion-avatar>
+    <div class="user-info">
+      <h2>{{ user.name }}</h2>
+      <p>{{ user.location }}</p>
+      <ion-chip color="warning">
+        ⭐ {{ user.rating }}/5
+      </ion-chip>
+    </div>
+  </div>
+
+  <!-- SECCIÓN DE PRODUCTOS -->
+  <h3 class="section-title">Productos Publicados</h3>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let product of products">
+        <ion-card class="product-card">
+          <img [src]="product.image" alt="Producto">
+          <ion-card-content>
+            <h4>{{ product.name }}</h4>
+            <ion-badge [color]="product.status === 'Disponible' ? 'success' : 'medium'">
+              {{ product.status }}
+            </ion-badge>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- SECCIÓN DE LIKES -->
+  <div class="likes-section">
+    <h3 (click)="toggleLikes()" class="likes-title">
+      Historial de Likes
+      <ion-icon [name]="showLikes ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+    </h3>
+
+    <ion-list *ngIf="showLikes">
+      <ion-item *ngFor="let like of likes">
+        <ion-label>
+          <strong>{{ like.user }}</strong> dio like a <em>{{ like.product }}</em>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- BOTÓN FLOTANTE -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" routerLink="/publicar">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
