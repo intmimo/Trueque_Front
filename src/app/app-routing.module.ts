@@ -8,6 +8,10 @@ const routes: Routes = [
   },  {
     path: 'profile',
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
+  },
+  {
+    path: 'product-publi',
+    loadChildren: () => import('./pages/product-publi/product-publi.module').then( m => m.ProductPubliPageModule)
   }
 
 ];
