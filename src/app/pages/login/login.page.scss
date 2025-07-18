@@ -1,0 +1,225 @@
+// Variables
+$primary-blue: #2563eb;
+$primary-purple: #9333ea;
+$gray-50: #f9fafb;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-900: #111827;
+$white: #ffffff;
+$red-500: #ef4444;
+
+// Mixins
+@mixin gradient-bg($color1, $color2) {
+  background: linear-gradient(135deg, $color1 0%, $color2 100%);
+}
+
+@mixin transition($property: all, $duration: 0.3s, $timing: ease) {
+  transition: $property $duration $timing;
+}
+
+@mixin shadow($level: 1) {
+  @if $level == 1 {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  } @else if $level == 2 {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  } @else if $level == 3 {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+// Estilos del Header
+.header-gradient {
+  @include gradient-bg($primary-blue, $primary-purple);
+}
+
+.header-title {
+  color: $white;
+  font-weight: 700;
+}
+
+// Estilos del Content
+.login-content {
+  --background: #{$gray-50};
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.form-wrapper {
+  max-width: 400px;
+  width: 100%;
+}
+
+// Sección de bienvenida
+.welcome-section {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  .welcome-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $gray-900;
+    margin-bottom: 0.5rem;
+  }
+
+  .welcome-subtitle {
+    color: $gray-600;
+    margin: 0;
+  }
+}
+
+// Tarjeta del formulario
+.form-card {
+  background: $white;
+  border-radius: 1rem;
+  @include shadow(3);
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// Grupos de formulario
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-item {
+  --border-radius: 0.5rem;
+  --border-width: 1px;
+  --border-color: #{$gray-200};
+  --highlight-color-focused: #{$primary-blue};
+  --background: #{$gray-700};
+  @include transition(border-color);
+
+  &:hover {
+    --border-color: #{$primary-blue};
+  }
+}
+
+.form-label {
+  --color: #{$gray-200};
+  color: $gray-200;
+  font-weight: 500;
+}
+
+.form-input {
+  --color: #{$white};
+  --placeholder-color: #{$gray-300};
+  color: $white;
+}
+
+// Botones
+.button-group {
+  padding-top: 1rem;
+}
+
+.login-button {
+  --background: linear-gradient(135deg, #{$primary-blue} 0%, #{$primary-purple} 100%);
+  --background-hover: linear-gradient(135deg, #{darken($primary-blue, 10%)} 0%, #{darken($primary-purple, 10%)} 100%);
+  --border-radius: 0.75rem;
+  --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  height: 3rem;
+  font-weight: 600;
+  @include transition(all, 0.3s, ease);
+
+  &:hover {
+    --box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+  }
+
+  .button-text {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+}
+
+// Divisor
+.divider {
+  position: relative;
+  margin: 1.5rem 0;
+
+  .divider-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: $gray-300;
+  }
+
+  .divider-text {
+    position: relative;
+    display: block;
+    text-align: center;
+    background: $white;
+    color: $gray-600;
+    font-size: 0.875rem;
+    padding: 0 0.5rem;
+  }
+}
+
+// Botón de registro
+.register-button {
+  --border-radius: 0.75rem;
+  --border-width: 2px;
+  --border-color: #{$gray-300};
+  --color: #{$gray-700};
+  height: 3rem;
+  @include transition(border-color);
+
+  &:hover {
+    --border-color: #{$primary-blue};
+  }
+
+  .register-text {
+    font-weight: 500;
+
+    .register-link {
+      color: $primary-blue;
+      font-weight: 600;
+    }
+  }
+}
+
+// Footer
+.footer-section {
+  text-align: center;
+  margin-top: 2rem;
+
+  .footer-text {
+    font-size: 0.875rem;
+    color: $gray-600;
+    margin: 0;
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .form-card {
+    padding: 1.5rem;
+  }
+
+  .welcome-section {
+    margin-bottom: 1.5rem;
+
+    .welcome-title {
+      font-size: 1.75rem;
+    }
+  }
+}
