@@ -1,16 +1,11 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
-//se agrega standalone
-//se importan cosas para poder usar bien las paginas
 @Component({
   selector: 'app-registro',
-  standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule],
+  standalone: false,
   templateUrl: './registro.page.html',
   styleUrls: ['./registro.page.scss'],
 })

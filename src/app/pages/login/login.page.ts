@@ -1,16 +1,11 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms'; //dependencias de formulario
-import { IonicModule } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'; //dependencias de formulario
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service'; //servicio de autenticacion
 
-//se agrega standalone
-//se importan cosas para poder usar bien las paginas
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule],
+  standalone: false,
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
