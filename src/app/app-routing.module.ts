@@ -26,14 +26,6 @@ const routes: Routes = [
   {
     path: 'product-publi',
     loadChildren: () => import('./pages/product-publi/product-publi.module').then(m => m.ProductPubliPageModule)
-  },
-  {
-    path: 'prueba1',
-    loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)
-  },
-  {
-    path: 'prueba2',
-    loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)
   }
 ];
 
