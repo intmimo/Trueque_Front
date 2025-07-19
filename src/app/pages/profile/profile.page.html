@@ -1,0 +1,54 @@
+<ion-content>
+  <div class="profile-container">
+
+    <!-- Datos del usuario -->
+    <div class="user-card">
+      <ion-avatar>
+        <img src="https://placehold.co/80x80" />
+      </ion-avatar>
+      <div class="user-info">
+        <h2>Armando Islas</h2>
+        <p>Oaxaca, México</p>
+        <ion-chip color="warning">
+          <ion-icon name="star" slot="start"></ion-icon>
+          4.5 / 5
+        </ion-chip>
+      </div>
+    </div>
+
+    <!-- Productos Publicados -->
+    <div>
+      <div class="section-title">Productos Publicados</div>
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let product of [1,2,3,4]">
+          <img src="https://placehold.co/300x200" />
+          <ion-card-content>
+            <h4>Nombre del producto</h4>
+            <ion-badge color="success">Disponible</ion-badge>
+          </ion-card-content>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de Likes -->
+    <div class="likes-section">
+      <div class="likes-title">
+        Historial de Likes
+        <ion-icon name="chevron-down-outline"></ion-icon>
+      </div>
+      <ion-list>
+        <ion-item *ngFor="let like of [1,2]">
+          Usuario123 dio like a <strong>ProductoX</strong>
+        </ion-item>
+      </ion-list>
+    </div>
+
+  </div>
+
+  <!-- Botón Flotante -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" routerLink="/publicar">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
