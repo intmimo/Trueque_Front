@@ -39,14 +39,31 @@ export class RegistroPage implements OnInit {
     return pass === confirm ? null : { noCoinciden: true };
   }
 
-  //funcion para el boton, si los campos son validos redirige a login
-  registrarse() {
-    if (this.registroForm.invalid) return;
+    //funcion para el boton, si los campos son validos redirige a login
+ registrarse() {
+  if (this.registroForm.invalid) return;
 
-    const { nombre, email, password, colonia, municipio } = this.registroForm.value;
-    this.authService.register(nombre, email, password, colonia, municipio);
-    this.router.navigate(['/login']);
-  }
+  const { nombre, email, password, colonia, municipio } = this.registroForm.value;
+
+  this.authService.register(nombre, email, password, colonia, municipio).subscribe({
+    next: (res) => {
+      console.log('Registro exitoso:', res);
+      alert('Registro exitoso');
+      this.router.navigate(['/login']);
+    },
+    error: (err) => {
+      console.error('Error al registrar:', err);
+      if (err.status === 422) {
+        const errores = err.error.errors;
+        const mensaje = Object.values(errores).reduce((acc: any[], val) => acc.concat(val), []).join('\n');
+        alert('Errores de validación:\n' + mensaje);
+      } else {
+        alert('Error al registrarse. Intenta más tarde.');
+      }
+    }
+  });
+}
+
 
   isFieldInvalid(campo: string): boolean {
     const control = this.registroForm.get(campo);
