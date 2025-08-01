@@ -1,0 +1,22 @@
+.product-card {
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 16px;
+}
+
+.product-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+}
+
+.disponible {
+  color: green;
+  font-weight: bold;
+}
+
+.intercambiado {
+  color: red;
+  font-weight: bold;
+}
