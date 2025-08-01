@@ -4,20 +4,30 @@
   </ion-toolbar>
 </ion-header>
 <ion-content *ngIf="product">
-<ion-slides *ngIf="product.images?.length > 0" [options]="slideOpts">
-<ion-slide *ngFor="let img of product.images">
+
+<swiper-container
+  *ngIf="product.images?.length > 0"
+  slides-per-view="1"
+  space-between="10"
+  loop="true"
+  pagination="true"
+  class="carousel-slides">
+  <swiper-slide *ngFor="let img of product.images">
+    <img [src]="img.image_url" alt="Imagen del producto" class="carousel-image" />
+  </swiper-slide>
+</swiper-container>
+
   <ion-card class="product-card">
-        <img [src]="img.image_url" alt="Imagen del producto" />
-        <ion-card-content>
-          <ion-card-title>{{ product.name }}
-          <span [ngClass]="{'disponible': product.status === 'disponible', 'intercambiado': product.status === 'intercambiado'}">
+    <ion-card-content>
+      <ion-card-title>{{ product.name }}
+        <span
+          [ngClass]="{'disponible': product.status === 'disponible', 'intercambiado': product.status === 'intercambiado'}">
           {{ product.status | titlecase }}
-          </span>
-        </ion-card-title>
-          <ion-card-subtitle>{{product.created_at | date: 'dd MMM yyyy'}}</ion-card-subtitle>
-          <p>{{ product.description }}</p>
-        </ion-card-content>
-      </ion-card>
-</ion-slide>
-</ion-slides>
+        </span>
+      </ion-card-title>
+      <ion-card-subtitle>{{product.created_at | date: 'dd MMM yyyy'}}</ion-card-subtitle>
+      <p>{{ product.description }}</p>
+      <p><strong>Intercambio por:</strong> {{ product.wanted_item }}</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

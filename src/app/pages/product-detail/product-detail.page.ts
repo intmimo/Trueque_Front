@@ -10,11 +10,13 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ProductDetailPage implements OnInit {
 
-product: any;
-slideOpts={
-  initialSlide:0,
-  speed: 400
+slideOpts = {
+  initialSlide: 0,
+  speed: 400,
+  loop: true
 };
+
+product: any;
 
 constructor(
 private route: ActivatedRoute,
@@ -38,5 +40,6 @@ ngOnInit() {
   });
 
   }
+
 
 }

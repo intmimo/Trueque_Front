@@ -20,3 +20,27 @@
   color: red;
   font-weight: bold;
 }
+
+.carousel-slides {
+  height: 250px;
+  margin-bottom: 16px;
+  width: 100%;
+  --swiper-pagination-color: #000;
+  --swiper-pagination-bullet-inactive-color: #ccc;
+  --swiper-pagination-bullet-size: 8px;
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+/* Asegurar que swiper-slide tenga el tamaño correcto */
+swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
