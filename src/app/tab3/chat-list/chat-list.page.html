@@ -1,0 +1,19 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Negociaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let chat of chats" (click)="abrirChat(chat.id)">
+      <ion-avatar slot="start">
+        <img [src]="chat.avatarUrl">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ chat.nombre }}</h2>
+        <p>{{ chat.ultimoMensaje }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

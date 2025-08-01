@@ -6,7 +6,24 @@ const routes: Routes = [
   {
     path: '',
     component: Tab3Page,
-  }
+    children: [
+    {
+      path: '',
+      redirectTo: 'chat-list',
+      pathMatch: 'full'
+    },
+    {
+      path: 'chat-list',
+      loadChildren: () => import ('./chat-list/chat-list.module').then(m => m.ChatListPageModule)
+    },
+    {
+      path: 'chat-detail/:id',
+      loadChildren: () => import('./chat-detail/chat-detail.module').then(m => m.ChatDetailPageModule)
+    }
+    ]
+  },
+
+
 ];
 
 @NgModule({
