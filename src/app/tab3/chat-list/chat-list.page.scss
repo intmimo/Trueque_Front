@@ -1,0 +1,13 @@
+.message-preview {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-meta {
+  text-align: right;
+  font-size: 0.8em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}

@@ -17,7 +17,7 @@ const routes: Routes = [
       loadChildren: () => import ('./chat-list/chat-list.module').then(m => m.ChatListPageModule)
     },
     {
-      path: 'chat-detail/:id',
+      path: 'chat-detail',
       loadChildren: () => import('./chat-detail/chat-detail.module').then(m => m.ChatDetailPageModule)
     }
     ]

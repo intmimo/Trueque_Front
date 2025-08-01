@@ -1,19 +1,26 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>Negociaciones</ion-title>
+    <ion-title>Chats Recientes</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let chat of chats" (click)="abrirChat(chat.id)">
+    <ion-item *ngFor="let chat of chats" button detail (click)="openChat(chat)">
       <ion-avatar slot="start">
-        <img [src]="chat.avatarUrl">
+        <img [src]="chat.avatar" alt="Avatar">
       </ion-avatar>
+
       <ion-label>
-        <h2>{{ chat.nombre }}</h2>
-        <p>{{ chat.ultimoMensaje }}</p>
+        <h2>{{ chat.name }}</h2>
+        <p class="message-preview">{{ chat.lastMessage }}</p>
       </ion-label>
+
+      <ion-note slot="end" color="medium" class="chat-meta">
+        <div>{{ chat.date }}</div>
+        <div>{{ chat.time }}</div>
+        <ion-badge *ngIf="chat.unreadCount > 0" color="primary">{{ chat.unreadCount }}</ion-badge>
+      </ion-note>
     </ion-item>
   </ion-list>
 </ion-content>
