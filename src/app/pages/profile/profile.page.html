@@ -1,59 +1,60 @@
-<ion-content class="ion-padding background">
+<ion-header [translucent]="true">
+  <ion-toolbar class="header-gradient-green">
+    <ion-title class="header-title">Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <!-- TARJETA DE USUARIO -->
-  <div class="user-card">
-    <ion-avatar class="avatar">
-      <img [src]="user.photo || 'https://via.placeholder.com/100'" alt="Foto de perfil">
-    </ion-avatar>
-    <div class="user-info">
-      <h2>{{ user.name }}</h2>
-      <p>{{ user.location }}</p>
-      <ion-chip color="warning">
-        ⭐ {{ user.rating }}/5
-      </ion-chip>
+<ion-content class="registro-content">
+  <div class="registro-container">
+    <div class="form-wrapper">
+
+      <div class="form-card" *ngIf="usuario; else noUser">
+        <div class="welcome-section">
+          <h2 class="welcome-title">{{ usuario.name }}</h2>
+          <p class="welcome-subtitle">Información de tu cuenta</p>
+        </div>
+
+        <div class="location-section">
+          <h3 class="section-title">
+            <span class="title-indicator"></span>
+            Datos personales
+          </h3>
+
+          <div class="form-group">
+            <ion-item class="form-item" lines="none">
+              <ion-label class="form-label">Correo:</ion-label>
+              <ion-text class="form-input">{{ usuario.email }}</ion-text>
+            </ion-item>
+          </div>
+
+          <div class="form-group">
+            <ion-item class="form-item" lines="none">
+              <ion-label class="form-label">Colonia:</ion-label>
+              <ion-text class="form-input">{{ usuario.colonia }}</ion-text>
+            </ion-item>
+          </div>
+
+          <div class="form-group">
+            <ion-item class="form-item" lines="none">
+              <ion-label class="form-label">Municipio:</ion-label>
+              <ion-text class="form-input">{{ usuario.municipio }}</ion-text>
+            </ion-item>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <ion-button expand="full" color="danger" (click)="logout()">
+            <span class="button-text">Cerrar sesión</span>
+          </ion-button>
+        </div>
+      </div>
+
+      <ng-template #noUser>
+        <ion-text color="danger">
+          <p>No se encontró información del usuario. Inicia sesión.</p>
+        </ion-text>
+      </ng-template>
+
     </div>
   </div>
-
-  <!-- SECCIÓN DE PRODUCTOS -->
-  <h3 class="section-title">Productos Publicados</h3>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="6" *ngFor="let product of products">
-        <ion-card class="product-card">
-          <img [src]="product.image" alt="Producto">
-          <ion-card-content>
-            <h4>{{ product.name }}</h4>
-            <ion-badge [color]="product.status === 'Disponible' ? 'success' : 'medium'">
-              {{ product.status }}
-            </ion-badge>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-
-  <!-- SECCIÓN DE LIKES -->
-  <div class="likes-section">
-    <h3 (click)="toggleLikes()" class="likes-title">
-      Historial de Likes
-      <ion-icon [name]="showLikes ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
-    </h3>
-
-    <ion-list *ngIf="showLikes">
-      <ion-item *ngFor="let like of likes">
-        <ion-label>
-          <strong>{{ like.user }}</strong> dio like a <em>{{ like.product }}</em>
-        </ion-label>
-      </ion-item>
-    </ion-list>
-  </div>
-
-  <!-- BOTÓN FLOTANTE -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-button routerLink="/product-publi" expand="block" color="primary">
-  Publicar Producto
-</ion-button>
-
-  </ion-fab>
-
 </ion-content>
