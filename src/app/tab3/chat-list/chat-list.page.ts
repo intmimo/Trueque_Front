@@ -42,7 +42,7 @@ export class ChatListPage implements OnInit {
 
   constructor(private router: Router) { }
 
-  //redirije a la pantalla de chatdetalle
+  //redirije a la pantalla de chatdetalle y se envian los objetos como parametros
   openChat(chat: any){
     this.router.navigate(['/tabs/tab3/chat-detail'],{
       queryParams: {
