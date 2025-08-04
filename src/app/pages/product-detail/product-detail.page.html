@@ -28,6 +28,14 @@
       <ion-card-subtitle>{{product.created_at | date: 'dd MMM yyyy'}}</ion-card-subtitle>
       <p>{{ product.description }}</p>
       <p><strong>Intercambio por:</strong> {{ product.wanted_item }}</p>
+  <ion-label>
+    <h3><strong>Vendedor:</strong> {{ product.user.name }}</h3>
+    <p><strong>Ubicación:</strong>  {{ product.user.municipio }}, {{ product.user.colonia }}</p>
+  </ion-label>
     </ion-card-content>
+    <ion-button expand="block" class="button" (click)="chat()">
+      <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
+      Me interesa
+    </ion-button>
   </ion-card>
 </ion-content>

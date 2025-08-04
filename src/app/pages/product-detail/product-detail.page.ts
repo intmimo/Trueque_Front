@@ -41,5 +41,7 @@ ngOnInit() {
 
   }
 
-
+  chat() {
+throw new Error('Method not implemented.');
+}
 }

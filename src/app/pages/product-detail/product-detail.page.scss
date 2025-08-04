@@ -44,3 +44,11 @@ swiper-slide {
   align-items: center;
   justify-content: center;
 }
+
+.button {
+  --background: gray;
+  --color: #fff;
+  border-radius: 20px;
+  margin: 16px;
+  font-weight: 500;
+}
