@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Share } from '@capacitor/share';
+
 
 @Component({
   selector: 'app-registro',
@@ -20,7 +22,8 @@ product: any;
 
 constructor(
 private route: ActivatedRoute,
-private http: HttpClient
+private http: HttpClient,
+private router: Router
 ) { }
 
 ngOnInit() {
@@ -42,6 +45,19 @@ ngOnInit() {
   }
 
   chat() {
-throw new Error('Method not implemented.');
+  this.router.navigate(['/tabs/tab3/chat-detail'], {
+    queryParams: {
+      name: this.product.user.name  // nombre del usuario que publicó el producto
+    }
+  });
+}
+
+async shareProduct() {
+  await Share.share({
+    title: this.product.name,
+    text: `Mira este producto: ${this.product.name} - ${this.product.description}`,
+    url: window.location.href,
+    dialogTitle: 'Compartir producto'
+  });
 }
 }
