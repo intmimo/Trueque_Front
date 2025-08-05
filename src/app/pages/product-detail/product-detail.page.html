@@ -3,19 +3,24 @@
     <ion-title>Detalle del Producto</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content *ngIf="product">
+@if (product; as i){
+<ion-content>
 
+@if (i.images?.length > 0){
 <swiper-container
-  *ngIf="product.images?.length > 0"
   slides-per-view="1"
   space-between="10"
   loop="true"
   pagination="true"
   class="carousel-slides">
-  <swiper-slide *ngFor="let img of product.images">
+  @for (img of i.images; track img){
+  <swiper-slide>
     <img [src]="img.image_url" alt="Imagen del producto" class="carousel-image" />
   </swiper-slide>
+  }
 </swiper-container>
+
+}
 
   <ion-card class="product-card">
     <ion-card-content>
@@ -43,3 +48,4 @@
 </ion-button>
   </ion-card>
 </ion-content>
+}
