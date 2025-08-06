@@ -27,9 +27,11 @@
                 placeholder="Tu nombre completo">
               </ion-input>
             </ion-item>
-            <ion-note color="danger" *ngIf="isFieldInvalid('nombre')" class="error-message">
-              El nombre es obligatorio.
-            </ion-note>
+            @if (isFieldInvalid('nombre')) {
+              <ion-note color="danger" class="error-message">
+                El nombre es obligatorio.
+              </ion-note>
+            }
           </div>
 
           <!-- Campo Email -->
@@ -43,9 +45,11 @@
                 placeholder="tu@email.com">
               </ion-input>
             </ion-item>
-            <ion-note color="danger" *ngIf="isFieldInvalid('email')" class="error-message">
-              Debes ingresar un correo válido.
-            </ion-note>
+            @if (isFieldInvalid('email')) {
+              <ion-note color="danger" class="error-message">
+                Debes ingresar un correo válido.
+              </ion-note>
+            }
           </div>
 
           <!-- Campo Contraseña -->
@@ -59,9 +63,11 @@
                 placeholder="••••••••">
               </ion-input>
             </ion-item>
-            <ion-note color="danger" *ngIf="isFieldInvalid('password')" class="error-message">
-              La contraseña es obligatoria (mínimo 8 caracteres).
-            </ion-note>
+            @if (isFieldInvalid('password')) {
+              <ion-note color="danger" class="error-message">
+                La contraseña es obligatoria (mínimo 8 caracteres).
+              </ion-note>
+            }
           </div>
 
           <!-- Campo Confirmar contraseña -->
@@ -75,9 +81,11 @@
                 placeholder="••••••••">
               </ion-input>
             </ion-item>
-            <ion-note color="danger" *ngIf="registroForm.touched && registroForm.errors?.['noCoinciden']" class="error-message">
-              Las contraseñas no coinciden.
-            </ion-note>
+            @if (registroForm.touched && registroForm.errors?.['noCoinciden']) {
+              <ion-note color="danger" class="error-message">
+                Las contraseñas no coinciden.
+              </ion-note>
+            }
           </div>
 
           <!-- Sección de ubicación -->
@@ -97,9 +105,11 @@
                   placeholder="Nombre de tu colonia">
                 </ion-input>
               </ion-item>
-              <ion-note color="danger" *ngIf="isFieldInvalid('colonia')" class="error-message">
-                La colonia es obligatoria.
-              </ion-note>
+              @if (isFieldInvalid('colonia')) {
+                <ion-note color="danger" class="error-message">
+                  La colonia es obligatoria.
+                </ion-note>
+              }
             </div>
 
             <!-- Campo Municipio -->
@@ -112,9 +122,11 @@
                   placeholder="Nombre de tu municipio">
                 </ion-input>
               </ion-item>
-              <ion-note color="danger" *ngIf="isFieldInvalid('municipio')" class="error-message">
-                El municipio es obligatorio.
-              </ion-note>
+              @if (isFieldInvalid('municipio')) {
+                <ion-note color="danger" class="error-message">
+                  El municipio es obligatorio.
+                </ion-note>
+              }
             </div>
           </div>
 
@@ -145,7 +157,6 @@
           </ion-button>
         </form>
       </div>
-
     </div>
   </div>
 </ion-content>
