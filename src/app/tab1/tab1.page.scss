@@ -1,96 +1,96 @@
-.perfil-container {
-  --background: #0d0d1f;
-  color: #fff;
+.profile-header {
+  display: flex;
+  gap: 16px;
   padding: 16px;
+  align-items: center;
 
-  .perfil-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-bottom: 24px;
-
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #4a90e2;
-      margin-bottom: 12px;
-    }
-
-    h2 {
-      margin: 4px 0;
-      font-size: 1.5rem;
-    }
-
-    .ubicacion {
-      font-size: 0.9rem;
-      color: #aaa;
-    }
-
-    .rating {
-      font-size: 1rem;
-      color: gold;
-    }
+  .avatar {
+    width: 88px; height: 88px; border-radius: 50%; overflow: hidden;
+    img { width: 100%; height: 100%; object-fit: cover; }
   }
 
-  .productos-section {
-    h3 {
-      margin-left: 8px;
-      margin-bottom: 12px;
+  .info {
+    flex: 1;
+    h2 { margin: 0 0 4px; font-weight: 700; }
+    .location {
+      margin: 0 0 8px;
+      color: #6b7280;
+      ion-icon { vertical-align: middle; margin-right: 4px; }
     }
+    .rating-row {
+      display: flex; align-items: center; gap: 6px;
+      span { color: #d1d5db; font-size: 20px; }
+      .filled { color: #f59e0b; }
+      .score { color: #111827; font-weight: 600; margin-left: 6px; }
+      .count { color: #6b7280; }
+    }
+  }
+}
 
-    .productos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 16px;
+.products-grid {
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 
-      .producto-card {
-        background: #1d1d30;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s;
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (min-width: 960px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 
-        &:hover {
-          transform: translateY(-2px);
-        }
+  .product-card {
+    border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,.06);
 
-        img {
-          width: 100%;
-          height: 120px;
-          object-fit: cover;
-        }
-
-        .producto-info {
-          padding: 8px;
-
-          h4 {
-            margin: 0;
-            font-size: 1rem;
-          }
-
-          p {
-            margin: 4px 0 0;
-            font-size: 0.8rem;
-            color: #ccc;
-          }
-        }
+    .thumb {
+      width: 100%; aspect-ratio: 4/3; background: #f3f4f6;
+      img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    }
+    .details {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px;
+      h4 { margin: 0; font-size: 14px; font-weight: 600; }
+      .status {
+        font-size: 12px; padding: 2px 8px; border-radius: 9999px; color: #fff;
+        &.disponible { background: #10b981; }
+        &.intercambiado { background: #6b7280; }
       }
     }
   }
+}
 
-  .likes-container {
-    padding: 12px;
+.ratings-list {
+  padding: 12px;
+  .rating-item {
+    background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 10px;
+    box-shadow: 0 1px 8px rgba(0,0,0,.05);
 
-    .like-item {
-      padding: 8px 0;
-      border-bottom: 1px solid #333;
+    .rater {
+      display: flex; align-items: center; gap: 10px;
+      img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+      h5 { margin: 0; font-size: 14px; font-weight: 600; }
+      small { color: #6b7280; }
     }
-
-    p {
-      font-size: 0.9rem;
+    .stars {
+      margin-top: 8px; display: flex; align-items: center; gap: 6px;
+      span { color: #d1d5db; font-size: 18px; }
+      .filled { color: #f59e0b; }
+      .value { color: #374151; font-weight: 600; }
+    }
+    .comment {
+      margin: 8px 0 0;
+      color: #374151; font-size: 14px;
     }
   }
+
+  .empty {
+    text-align: center; color: #6b7280; padding: 24px 0;
+    ion-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+  }
+}
+
+.empty {
+  text-align: center; padding: 24px 0; color: #6b7280;
+  ion-icon { font-size: 32px; display: block; margin-bottom: 8px; }
 }
