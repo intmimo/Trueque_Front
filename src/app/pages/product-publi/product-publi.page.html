@@ -12,17 +12,17 @@
     <ion-card class="form-card">
       <ion-card-header>
         <ion-card-title>Imágenes del producto</ion-card-title>
-        <ion-card-subtitle>Puedes subir hasta 5 imágenes</ion-card-subtitle>
+        <ion-card-subtitle>Puedes subir hasta 5 imágenes (máximo 5MB cada una)</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
         <input
           type="file"
           multiple
-          accept="image/png, image/jpeg"
+          accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
           (change)="onImageSelected($event)"
         />
 
-        <div class="image-preview-container">
+        <div class="image-preview-container" *ngIf="imagePreviews.length > 0">
           <div
             class="image-preview"
             *ngFor="let img of imagePreviews; let i = index"
@@ -35,6 +35,10 @@
             ></ion-icon>
           </div>
         </div>
+
+        <ion-note color="danger" *ngIf="selectedFiles.length === 0">
+          Debes agregar al menos una imagen
+        </ion-note>
       </ion-card-content>
     </ion-card>
 
@@ -44,29 +48,39 @@
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Título</ion-label>
+          <ion-label position="stacked">Título *</ion-label>
           <ion-input
             formControlName="title"
             placeholder="Ej. Xbox One usada"
             maxlength="50"
           ></ion-input>
+          <ion-note slot="error" *ngIf="productForm.get('title')?.invalid && productForm.get('title')?.touched">
+            El título debe tener entre 3 y 50 caracteres
+          </ion-note>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Descripción</ion-label>
+          <ion-label position="stacked">Descripción *</ion-label>
           <ion-textarea
             formControlName="description"
             placeholder="Describe el estado, antigüedad, detalles, etc."
             autoGrow="true"
+            maxlength="255"
           ></ion-textarea>
+          <ion-note slot="error" *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched">
+            La descripción debe tener entre 10 y 255 caracteres
+          </ion-note>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">¿Qué deseas a cambio?</ion-label>
+          <ion-label position="stacked">¿Qué deseas a cambio? *</ion-label>
           <ion-input
             formControlName="wantedItem"
             placeholder="Ej. Audífonos, videojuego, otro artículo"
           ></ion-input>
+          <ion-note slot="error" *ngIf="productForm.get('wantedItem')?.invalid && productForm.get('wantedItem')?.touched">
+            Este campo es obligatorio
+          </ion-note>
         </ion-item>
 
         <ion-item>
@@ -79,14 +93,17 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button
+    <!-- Cambiar FAB por botón normal -->
+    <div class="ion-padding">
+      <ion-button
+        expand="block"
         color="primary"
         type="submit"
-        [disabled]="productForm.invalid"
+        [disabled]="!canSubmit"
       >
-        <ion-icon name="send"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+        <ion-icon name="send" slot="start"></ion-icon>
+        Publicar Producto
+      </ion-button>
+    </div>
   </form>
 </ion-content>
