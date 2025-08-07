@@ -1,17 +1,47 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="perfil-container">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="perfil-header">
+    <img class="avatar" src="assets/default-avatar.png" alt="Foto de perfil">
+    <h2>{{ user?.name || 'Nombre' }}</h2>
+    <p class="ubicacion">{{ user?.colonia }}, {{ user?.municipio }}</p>
+    <p class="rating">
+      ⭐ {{ user?.rating || '0.0' }}/5
+    </p>
+  </div>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <div class="productos-section">
+    <h3>Mis Productos</h3>
+    <div class="productos-grid">
+      <div class="producto-card" *ngFor="let product of products">
+        <img [src]="product.images[0]?.image_path ? imageBaseUrl + product.images[0].image_path : 'assets/placeholder.png'" alt="{{ product.name }}">
+        <div class="producto-info">
+          <h4>{{ product.name }}</h4>
+          <p>{{ product.status }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ion-accordion-group>
+    <ion-accordion>
+      <ion-item slot="header">
+        <ion-label>Historial de Likes</ion-label>
+      </ion-item>
+      <div class="likes-container" slot="content">
+        <div *ngIf="likesRecibidos.length === 0">
+          <p>No has recibido likes aún.</p>
+        </div>
+        <div class="like-item" *ngFor="let like of likesRecibidos">
+          <p><strong>{{ like.liked_by.name }}</strong> dio like a <em>{{ like.product.name }}</em></p>
+        </div>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button [routerLink]="['/product-publi']">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>

@@ -74,6 +74,8 @@ export class LoginPage implements OnInit {
     //funcion y alerta si se inicia sesion correctamente
     this.authService.login(email, password).subscribe({
       next: (res) => {
+        localStorage.setItem('token', res.token); // 👈 guardar token
+        console.log('Token guardado:', res.token);
         Swal.fire({
           icon: 'success',
           title: '¡Bienvenido!',
