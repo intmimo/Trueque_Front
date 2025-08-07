@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>product</ion-title>
+    <ion-title>Productos</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">product</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  @if (products.length > 0) {
+  <ion-list>
+    @for (product of products; track product.id) {
+    <ion-item (click)="verDetalle(product.id)">
+      @if (product.firstImage) {
+      <ion-thumbnail slot="start">
+        <img [src]="product.firstImage" />
+      </ion-thumbnail>
+      }
+      <ion-label>
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  } @else {
+  <ion-text color="medium">
+    <p class="ion-text-center">No hay productos disponibles</p>
+  </ion-text>
+  }
 </ion-content>
