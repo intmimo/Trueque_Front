@@ -1,0 +1,96 @@
+.perfil-container {
+  --background: #0d0d1f;
+  color: #fff;
+  padding: 16px;
+
+  .perfil-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 24px;
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #4a90e2;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 4px 0;
+      font-size: 1.5rem;
+    }
+
+    .ubicacion {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+    .rating {
+      font-size: 1rem;
+      color: gold;
+    }
+  }
+
+  .productos-section {
+    h3 {
+      margin-left: 8px;
+      margin-bottom: 12px;
+    }
+
+    .productos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+
+      .producto-card {
+        background: #1d1d30;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        img {
+          width: 100%;
+          height: 120px;
+          object-fit: cover;
+        }
+
+        .producto-info {
+          padding: 8px;
+
+          h4 {
+            margin: 0;
+            font-size: 1rem;
+          }
+
+          p {
+            margin: 4px 0 0;
+            font-size: 0.8rem;
+            color: #ccc;
+          }
+        }
+      }
+    }
+  }
+
+  .likes-container {
+    padding: 12px;
+
+    .like-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}

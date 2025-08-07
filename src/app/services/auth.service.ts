@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -9,6 +9,15 @@ export class AuthService {
   private API_URL = 'http://localhost:8000/api'; // Asegúrate que es tu URL correcta
 
   constructor(private http: HttpClient) {}
+
+
+
+  getAuthHeaders(): HttpHeaders {
+  const token = localStorage.getItem('token');
+  return new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
+}
 
 
 
@@ -31,4 +40,14 @@ export class AuthService {
       password
     });
   }
+
+
+  getProfile(): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = { Authorization: `Bearer ${token}` };
+  return this.http.get(`${this.API_URL}/profile`, { headers });
+}
+
+
+
 }
