@@ -45,11 +45,6 @@ export class ProductService {
     });
   }
 
-  // Obtener todos los productos públicos
-  getAllProducts(): Observable<any> {
-    return this.http.get(`${this.API_URL}/products`);
-  }
-
   // Obtener mis productos
   getMyProducts(): Observable<any> {
     return this.http.get(`${this.API_URL}/my-products`, {
