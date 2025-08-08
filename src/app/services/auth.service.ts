@@ -48,6 +48,13 @@ export class AuthService {
   return this.http.get(`${this.API_URL}/profile`, { headers });
 }
 
+updateProfile(payload: any): Observable<any> {
+    // Enviar solo los campos que quieras actualizar
+    return this.http.put(`${this.API_URL}/profile/update`, payload, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+
 
 
 }
