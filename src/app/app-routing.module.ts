@@ -20,13 +20,17 @@ const routes: Routes = [
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
   {
-    path: 'profile',
-    loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)
+    path: 'tab1',
+    loadChildren: () => import('./tab1/tab1.module').then(m => m.Tab1PageModule)
   },
   {
     path: 'product-publi',
     loadChildren: () => import('./pages/product-publi/product-publi.module').then(m => m.ProductPubliPageModule)
-  }
+  },
+  {
+    path: 'product-detail/:id',
+    loadChildren: () => import('./pages/product-detail/product-detail.module').then( m => m.ProductDetailPageModule)
+  },
 ];
 
 @NgModule({

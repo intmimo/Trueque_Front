@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
     console.log('🌀 LoginPage inicializada');
   }
 
-  // Función helper para configurar el contenedor de SweetAlert2
+  // Ajuste del contenedor de SweetAlert2 en Ionic
   private fixSwalContainer() {
     const container = document.querySelector('.swal2-container');
     if (container) {
@@ -38,7 +38,6 @@ export class LoginPage implements OnInit {
     }
   }
 
-  // Función para iniciar sesión e ir a tabs
   login() {
     if (this.loginForm.invalid) {
       Swal.fire({
@@ -50,19 +49,14 @@ export class LoginPage implements OnInit {
         allowOutsideClick: true,
         allowEscapeKey: true,
         heightAuto: false,
-        customClass: {
-          container: 'custom-swal-container'
-        },
-        didOpen: () => {
-          this.fixSwalContainer();
-        }
+        customClass: { container: 'custom-swal-container' },
+        didOpen: () => this.fixSwalContainer()
       });
       return;
     }
 
     const { email, password } = this.loginForm.value;
 
-    // Mostrar alerta de carga
     Swal.fire({
       title: 'Iniciando sesión...',
       text: 'Por favor espera un momento',
@@ -76,10 +70,12 @@ export class LoginPage implements OnInit {
     });
 
     this.authService.login(email, password).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         console.log('🔐 Login response:', res);
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
+        // Guarda token y usuario
+        localStorage.setItem('token', res?.token || '');
+        localStorage.setItem('user', JSON.stringify(res?.user || {}));
+        console.log('Token guardado:', res?.token);
 
         Swal.fire({
           icon: 'success',
@@ -92,15 +88,9 @@ export class LoginPage implements OnInit {
           heightAuto: false,
           timer: 2000,
           timerProgressBar: true,
-          customClass: {
-            container: 'custom-swal-container'
-          },
-          didOpen: () => {
-            this.fixSwalContainer();
-          }
-        }).then(() => {
-          this.router.navigate(['/tabs']);
-        });
+          customClass: { container: 'custom-swal-container' },
+          didOpen: () => this.fixSwalContainer()
+        }).then(() => this.router.navigate(['/tabs']));
       },
       error: (err) => {
         console.error('Error al iniciar sesión:', err);
@@ -128,18 +118,13 @@ export class LoginPage implements OnInit {
           allowOutsideClick: true,
           allowEscapeKey: true,
           heightAuto: false,
-          customClass: {
-            container: 'custom-swal-container'
-          },
-          didOpen: () => {
-            this.fixSwalContainer();
-          }
+          customClass: { container: 'custom-swal-container' },
+          didOpen: () => this.fixSwalContainer()
         });
       }
     });
   }
 
-  // Función para ir a pantalla de registro
   irARegistro() {
     this.router.navigate(['/registro']);
   }

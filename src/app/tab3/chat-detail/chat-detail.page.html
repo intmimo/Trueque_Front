@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content #content class="chat-content">
+<ion-content #content [fullscreen]="true" class="chat-content">
   <div class="messages-list">
     <ng-container *ngFor="let msg of messages">
       <div class="message-bubble" [ngClass]="{ 'sent': msg.sentByUser, 'received': !msg.sentByUser }">

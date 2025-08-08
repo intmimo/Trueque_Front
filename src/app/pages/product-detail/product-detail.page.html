@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Detalle del Producto</ion-title>
+  </ion-toolbar>
+</ion-header>
+@if (product; as i){
+<ion-content>
+
+@if (i.images?.length > 0){
+<swiper-container
+  slides-per-view="1"
+  space-between="10"
+  loop="true"
+  pagination="true"
+  class="carousel-slides">
+  @for (img of i.images; track img){
+  <swiper-slide>
+    <img [src]="img.image_url" alt="Imagen del producto" class="carousel-image" />
+  </swiper-slide>
+  }
+</swiper-container>
+
+}
+
+  <ion-card class="product-card">
+    <ion-card-content>
+      <ion-card-title>{{ product.name }}
+        <span
+          [ngClass]="{'disponible': product.status === 'disponible', 'intercambiado': product.status === 'intercambiado'}">
+          {{ product.status | titlecase }}
+        </span>
+      </ion-card-title>
+      <ion-card-subtitle>{{product.created_at | date: 'dd MMM yyyy'}}</ion-card-subtitle>
+      <p>{{ product.description }}</p>
+      <p><strong>Intercambio por:</strong> {{ product.wanted_item }}</p>
+  <ion-label>
+    <h3><strong>Vendedor:</strong> {{ product.user.name }}</h3>
+    <p><strong>Ubicación:</strong>  {{ product.user.municipio }}, {{ product.user.colonia }}</p>
+  </ion-label>
+    </ion-card-content>
+    <ion-button expand="block" class="button" (click)="chat()">
+      <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
+      Me interesa
+    </ion-button>
+    <ion-button expand="block" class="button" (click)="shareProduct()" class="share-button">
+  <ion-icon name="share-social-outline" slot="start"></ion-icon>
+  Compartir
+</ion-button>
+  </ion-card>
+</ion-content>
+}

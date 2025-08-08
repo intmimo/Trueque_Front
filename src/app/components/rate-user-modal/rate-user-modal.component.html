@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Calificar {{ userName || 'usuario' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div class="stars">
+    <span *ngFor="let s of [1,2,3,4,5]"
+          [class.active]="s <= stars"
+          (click)="setStars(s)">★</span>
+  </div>
+
+  <ion-item lines="none" class="mt-2">
+    <ion-label position="stacked">Comentario (opcional)</ion-label>
+    <ion-textarea
+      [(ngModel)]="comment"
+      placeholder="Escribe un comentario breve..."
+      autoGrow="true">
+    </ion-textarea>
+  </ion-item>
+
+  <ion-button expand="block" color="primary" [disabled]="!stars || sending" (click)="submit()">
+    {{ sending ? 'Enviando...' : 'Enviar calificación' }}
+  </ion-button>
+</ion-content>

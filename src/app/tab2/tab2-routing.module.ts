@@ -6,11 +6,23 @@ const routes: Routes = [
   {
     path: '',
     component: Tab2Page,
+    children: [
+      {
+        path: '',
+        redirectTo: 'product',
+        pathMatch: 'full'
+      },
+      {
+        path: 'product',
+        loadChildren: () => import('./product/product.module').then(m => m.ProductPageModule)
+      }
+    ]
   }
 ];
+
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class Tab2PageRoutingModule {}
+export class Tab2PageRoutingModule { }

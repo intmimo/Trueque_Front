@@ -25,6 +25,7 @@
     "@capacitor/core": "7.4.2",
     "@capacitor/haptics": "7.0.1",
     "@capacitor/keyboard": "7.0.1",
+    "@capacitor/share": "^7.0.1",
     "@capacitor/status-bar": "7.0.1",
     "@ionic/angular": "^8.0.0",
     "ionicons": "^7.0.0",
@@ -32,6 +33,7 @@
     "pusher-js": "^8.4.0",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.22.2",
+    "swiper": "^11.2.10",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
