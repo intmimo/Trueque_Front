@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Share } from '@capacitor/share';
+import { ChatService } from 'src/app/services/chat.service';
 
 
 @Component({
@@ -23,7 +24,8 @@ product: any;
 constructor(
 private route: ActivatedRoute,
 private http: HttpClient,
-private router: Router
+private router: Router,
+private chat_service: ChatService
 ) { }
 
 ngOnInit() {
@@ -44,13 +46,22 @@ ngOnInit() {
 
   }
 
-  chat() {
-  this.router.navigate(['/tabs/tab3/chat-detail'], {
-    queryParams: {
-      name: this.product.user.name  // nombre del usuario que publicó el producto
+chat() {
+  this.chat_service.startChat(this.product.user.id).subscribe({
+    next: (res: any) => {
+      this.router.navigate(['/tabs/tab3/chat-detail'], {
+        queryParams: {
+          chatId: res.chat_id,
+          name: this.product.user.name
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error al iniciar chat:', err);
     }
   });
 }
+
 
 async shareProduct() {
   await Share.share({
