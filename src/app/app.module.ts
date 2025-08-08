@@ -27,6 +27,7 @@ import { RateUserModalComponent } from './components/rate-user-modal/rate-user-m
     FormsModule,      // 📌 NECESARIO PARA [(ngModel)]
     CommonModule      // 📌 NECESARIO PARA directivas *ngIf, *ngFor, etc.
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
