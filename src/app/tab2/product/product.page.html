@@ -5,25 +5,25 @@
 </ion-header>
 
 <ion-content>
-  @if (products.length > 0) {
   <ion-list>
     @for (product of products; track product.id) {
-    <ion-item (click)="verDetalle(product.id)">
-      @if (product.firstImage) {
-      <ion-thumbnail slot="start">
-        <img [src]="product.firstImage" />
-      </ion-thumbnail>
-      }
-      <ion-label>
-        <h2>{{ product.name }}</h2>
-        <p>{{ product.description }}</p>
-      </ion-label>
-    </ion-item>
+      <ion-item (click)="verDetalle(product.id)">
+        @if (product.images?.length > 0) {
+          <ion-thumbnail slot="start">
+            <img [src]="'http://localhost:8000/storage/' + product.images[0].image_path">
+          </ion-thumbnail>
+        }
+        <ion-label>
+          <h2>{{ product.name }}</h2>
+          <p>{{ product.description }}</p>
+        </ion-label>
+      </ion-item>
     }
   </ion-list>
-  } @else {
-  <ion-text color="medium">
-    <p class="ion-text-center">No hay productos disponibles</p>
-  </ion-text>
+
+  @if (products.length === 0) {
+    <div class="ion-text-center ion-padding">
+      <p>No hay productos disponibles</p>
+    </div>
   }
 </ion-content>

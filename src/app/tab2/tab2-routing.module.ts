@@ -5,7 +5,7 @@ import { Tab2Page } from './tab2.page';
 const routes: Routes = [
   {
     path: '',
-    component: Tab2Page,
+    component:Tab2Page,
     children: [
       {
         path: '',
@@ -14,7 +14,7 @@ const routes: Routes = [
       },
       {
         path: 'product',
-        loadChildren: () => import('./product/product.module').then(m => m.ProductPageModule)
+        loadChildren: () => import('./product/product.module').then(m=>m.ProductPageModule)
       }
     ]
   }
