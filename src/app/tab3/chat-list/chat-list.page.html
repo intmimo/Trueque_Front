@@ -3,23 +3,20 @@
     <ion-title>Chats Recientes</ion-title>
   </ion-toolbar>
 </ion-header> -->
-
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let chat of chats" button detail (click)="openChat(chat)">
       <ion-avatar slot="start">
-        <img [src]="chat.avatar" alt="Avatar">
+        <img src="https://i.pravatar.cc/150?img=1" alt="Avatar">
       </ion-avatar>
 
       <ion-label>
-        <h2>{{ chat.name }}</h2>
-        <p class="message-preview">{{ chat.lastMessage }}</p>
+        <h2>{{ chat.users[0]?.name }}</h2>
+        <p class="message-preview">{{ chat.messages[0]?.content || 'Sin mensajes' }}</p>
       </ion-label>
 
       <ion-note slot="end" color="medium" class="chat-meta">
-        <div>{{ chat.date }}</div>
-        <div>{{ chat.time }}</div>
-        <ion-badge *ngIf="chat.unreadCount > 0" color="primary">{{ chat.unreadCount }}</ion-badge>
+        <div>{{ chat.messages[0]?.created_at | date: 'shortTime' }}</div>
       </ion-note>
     </ion-item>
   </ion-list>

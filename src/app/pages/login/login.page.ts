@@ -25,6 +25,10 @@ export class LoginPage implements OnInit {
     });
   }
 
+  ngOnInit(): void {
+    console.log('🌀 LoginPage inicializada');
+  }
+
   // Función helper para configurar el contenedor de SweetAlert2
   private fixSwalContainer() {
     const container = document.querySelector('.swal2-container');
@@ -71,9 +75,12 @@ export class LoginPage implements OnInit {
       }
     });
 
-    //funcion y alerta si se inicia sesion correctamente
     this.authService.login(email, password).subscribe({
       next: (res) => {
+        console.log('🔐 Login response:', res);
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
+
         Swal.fire({
           icon: 'success',
           title: '¡Bienvenido!',
@@ -92,17 +99,15 @@ export class LoginPage implements OnInit {
             this.fixSwalContainer();
           }
         }).then(() => {
-          this.router.navigate(['/tabs']); // Redirige a las tabs
+          this.router.navigate(['/tabs']);
         });
       },
-      // Alerta si hay algo incorrecto
       error: (err) => {
         console.error('Error al iniciar sesión:', err);
 
         let errorTitle = 'Error al iniciar sesión';
         let errorMessage = 'Credenciales incorrectas o error del servidor';
 
-        // Personalizar mensaje según el tipo de error
         if (err.status === 401) {
           errorTitle = 'Credenciales incorrectas';
           errorMessage = 'El email o la contraseña son incorrectos.';
@@ -114,7 +119,6 @@ export class LoginPage implements OnInit {
           errorMessage = 'Ocurrió un problema en el servidor. Inténtalo más tarde.';
         }
 
-        //alerta de error
         Swal.fire({
           icon: 'error',
           title: errorTitle,
@@ -139,6 +143,4 @@ export class LoginPage implements OnInit {
   irARegistro() {
     this.router.navigate(['/registro']);
   }
-
-  ngOnInit() {}
 }

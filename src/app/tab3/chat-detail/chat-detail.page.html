@@ -3,26 +3,36 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/tab3"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ chatName }}</ion-title> <!-- muestra el nombre del contacto en la parte superior -->
+    <ion-title>{{ chatName }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="chat-content">
-
-  <div *ngFor="let msg of messages" [ngClass]="{'sent': msg.sentByUser, 'received': !msg.sentByUser}" class="message-bubble">
-    <div class="message-text">{{ msg.text }}</div>
-    <div class="message-time">{{ msg.time }}</div>
+<ion-content #content class="chat-content">
+  <div class="messages-list">
+    <ng-container *ngFor="let msg of messages">
+      <div class="message-bubble" [ngClass]="{ 'sent': msg.sentByUser, 'received': !msg.sentByUser }">
+        <div *ngIf="msg.imageUrl" class="message-image">
+          <img [src]="msg.imageUrl" alt="imagen" (load)="onImageLoaded()" />
+        </div>
+        <div *ngIf="msg.text" class="message-text">{{ msg.text }}</div>
+        <div class="message-time">{{ msg.time }}</div>
+      </div>
+    </ng-container>
   </div>
 
-</ion-content>
-
-<ion-footer>
-  <ion-toolbar>
+  <!-- 🔒 Composer fijo DENTRO del content -->
+  <ion-toolbar class="composer-toolbar" slot="fixed">
     <ion-item lines="none">
       <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"></ion-input>
-      <ion-button slot="end" (click)="sendMessage()" [disabled]="!newMessage">
+
+      <input type="file" (change)="onImageSelected($event)" accept="image/*" hidden #imageInput>
+      <ion-button fill="clear" (click)="imageInput.click()">
+        <ion-icon name="image-outline"></ion-icon>
+      </ion-button>
+
+      <ion-button slot="end" (click)="sendMessage()" [disabled]="!newMessage && !selectedImage">
         <ion-icon name="send-outline"></ion-icon>
       </ion-button>
     </ion-item>
   </ion-toolbar>
-</ion-footer>
+</ion-content>
