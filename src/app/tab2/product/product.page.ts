@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from 'src/app/services/product.service';
@@ -11,25 +10,24 @@ import { ProductService } from 'src/app/services/product.service';
 })
 export class ProductPage implements OnInit {
 
-  products : any [] = [];
+  products: any[] = [];
 
-  constructor(private pro_service: ProductService,
-    private router: Router,
-  private http: HttpClient, ) { }
+  constructor(
+    private productService: ProductService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
-this.http.get('http://localhost:8000/api/products').subscribe((res: any) => {
-      this.products = res.data.map((p: any) => ({
-        ...p,
-        firstImage: p.images?.[0]?.image_path
-          ? `http://localhost:8000/storage/${p.images[0].image_path}`
-          : null
-      }));
+    this.loadProducts();
+  }
+
+  loadProducts() {
+    this.productService.getAllProducts().subscribe(response => {
+      this.products = response.data;
     });
   }
 
   verDetalle(id: number) {
     this.router.navigate(['/product-detail', id]);
   }
-
 }
