@@ -34,8 +34,8 @@ export class AuthService {
   }
 
   //funcion de la pagina de inicio de sesion
-  login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/login`, {
+  login(email: string, password: string): Observable<{ token: string, user: any }> {
+    return this.http.post<{ token: string, user: any }>(`${this.API_URL}/login`, {
       email,
       password
     });
