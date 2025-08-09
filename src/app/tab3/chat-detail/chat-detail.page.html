@@ -27,14 +27,11 @@
         <!-- Texto -->
         <div *ngIf="!msg.deleted && msg.text" class="message-text">{{ msg.text }}</div>
 
-        <!-- Footer con hora, palomitas y papelera (solo si NO está eliminado) -->
+        <!-- Footer con hora, palomitas y papelera -->
         <div class="message-time" *ngIf="!msg.deleted">
           {{ msg.time }}
-          <!-- ✅ Palomitas -->
           <ion-icon *ngIf="msg.sentByUser && !msg.readAt" name="checkmark-outline"></ion-icon>
           <ion-icon *ngIf="msg.sentByUser && msg.readAt" name="checkmark-done-outline" class="read"></ion-icon>
-
-          <!-- 🗑️ Papelera (opcional) solo en mensajes propios -->
           <ion-icon
             *ngIf="msg.sentByUser"
             name="trash-outline"
@@ -46,7 +43,10 @@
     </ng-container>
   </div>
 
-  <!-- 🔒 Composer fijo DENTRO del content -->
+  <!-- Espaciador para que el último mensaje no quede debajo del composer -->
+  <div class="bottom-spacer"></div>
+
+  <!-- Composer fijo -->
   <ion-toolbar class="composer-toolbar" slot="fixed">
     <ion-item lines="none">
       <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"></ion-input>
