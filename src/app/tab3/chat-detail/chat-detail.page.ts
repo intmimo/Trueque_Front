@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ChatService } from 'src/app/services/chat.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-chat-detail',
@@ -60,14 +61,36 @@ export class ChatDetailPage implements OnInit, OnDestroy {
 
       // Escuchar en tiempo real
       this.chatService.listenToChat(this.chatId, (e: any) => {
+
+        // ✅ Evento de "mensajes leídos" (palomitas)
+        if (e.__type === 'read' && Array.isArray(e.message_ids)) {
+          if (e.reader_id !== this.userId) {
+            this.messages = this.messages.map(m =>
+              (m.sentByUser && e.message_ids.includes(m.id))
+                ? { ...m, readAt: new Date().toISOString() }
+                : m
+            );
+            this.scrollToBottomSoon();
+          }
+          return;
+        }
+
         const time = this.formatTime(e.created_at);
         const senderId = this.senderIdFrom(e); // 👈 FIX aquí
 
+        // ⛔️ Evitar duplicado: si el mensaje es mío, no lo agrego (ya se hizo push optimista)
+        if (senderId === this.userId) {
+          this.scrollToBottomSoon();
+          return;
+        }
+
         this.messages.push({
+          id: e.id,                           // 👈 para poder marcar leído
           text: e.content,
           sentByUser: senderId === this.userId,
           time,
-          imageUrl: e.image_path || null
+          imageUrl: e.image_path || null,
+          readAt: e.read_at || null           // 👈 estado de lectura
         });
         this.scrollToBottomSoon();
       });
@@ -88,6 +111,7 @@ export class ChatDetailPage implements OnInit, OnDestroy {
   // Auto-scroll al entrar (por si ya había historial)
   ionViewDidEnter() {
     this.scrollToBottomSoon();
+    if (this.chatId) this.chatService.markRead(this.chatId).subscribe(); // ✅ marca leídos al entrar
   }
 
   // Al salir de la vista, cierra canal
@@ -124,13 +148,16 @@ export class ChatDetailPage implements OnInit, OnDestroy {
         this.messages = res.data.map((msg: any) => {
           const senderId = this.senderIdFrom(msg); // 👈 FIX aquí
           return {
+            id: msg.id,                              // 👈
             text: msg.content,
             sentByUser: senderId === this.userId,
             time: this.formatTime(msg.created_at),
-            imageUrl: msg.image_path
+            imageUrl: msg.image_path,
+            readAt: msg.read_at || null              // 👈
           };
         });
         this.scrollToBottomSoon();
+        this.chatService.markRead(this.chatId).subscribe(); // ✅ marca leídos al cargar
       },
       error: (err) => console.error('❌ Error al cargar mensajes:', err)
     });
@@ -152,10 +179,12 @@ export class ChatDetailPage implements OnInit, OnDestroy {
         const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         this.messages.push({
+          id: res.id,                       // 👈 para luego marcar leído
           text: res.content,
           sentByUser: true,
           time,
-          imageUrl: res.image_path
+          imageUrl: res.image_path,
+          readAt: res.read_at || null       // 👈 por si el back ya lo trae
         });
 
         this.newMessage = '';
@@ -165,4 +194,54 @@ export class ChatDetailPage implements OnInit, OnDestroy {
       error: (err) => console.error('❌ Error al enviar mensaje:', err)
     });
   }
-}
+
+  // ---------- Borrar mensaje (mínimo cambio) ----------
+  confirmDeleteMessage(msg: any) {
+    if (!msg?.id || !msg.sentByUser) return; // solo puedes borrar lo tuyo
+  
+    Swal.fire({
+      title: '¿Deseas eliminar el mensaje?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'No',
+      confirmButtonColor: '#ef4444',
+      heightAuto: false
+    }).then(result => {
+      if (!result.isConfirmed) return;
+  
+      this.chatService.deleteMessage(msg.id).subscribe({
+        next: () => {
+          // No lo quitamos: lo marcamos como eliminado
+          const i = this.messages.findIndex(m => m.id === msg.id);
+          if (i >= 0) {
+            this.messages[i] = {
+              ...this.messages[i],
+              text: null,
+              imageUrl: null,
+              deleted: true
+            };
+          }
+  
+          Swal.fire({
+            icon: 'success',
+            title: 'Mensaje eliminado',
+            timer: 1200,
+            showConfirmButton: false,
+            heightAuto: false
+          });
+          this.scrollToBottomSoon();
+        },
+        error: (err) => {
+          console.error('❌ No se pudo eliminar mensaje:', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo eliminar el mensaje.',
+            heightAuto: false
+          });
+        }
+      });
+    });
+  }
+}  

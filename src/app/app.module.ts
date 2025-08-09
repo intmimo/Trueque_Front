@@ -1,7 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -17,20 +16,20 @@ import { RateUserModalComponent } from './components/rate-user-modal/rate-user-m
 @NgModule({
   declarations: [
     AppComponent,
-    RateUserModalComponent // 📌 DECLARAR EL MODAL
+    RateUserModalComponent
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
-    FormsModule,      // 📌 NECESARIO PARA [(ngModel)]
-    CommonModule      // 📌 NECESARIO PARA directivas *ngIf, *ngFor, etc.
+    FormsModule,
+    CommonModule
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
-  bootstrap: [AppComponent], // 📌 PERMITE USAR <ion-header>, etc.
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] // ✅ permitir web components de Ionic
 })
 export class AppModule {}

@@ -53,3 +53,19 @@ ion-content.chat-content::part(scroll) {
 .message-time { margin-top:4px; font-size:12px; opacity:.65; text-align:right; }
 
 
+.message-time { display: flex; align-items: center; gap: 4px; }
+.message-time .read { color: #3b82f6; }
+
+.chat-content {
+  --padding-bottom: 92px; /* Altura del composer */
+}
+
+.messages-list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.bottom-spacer {
+  height: 92px; /* Igual que --padding-bottom */
+}
