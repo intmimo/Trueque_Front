@@ -53,3 +53,6 @@ ion-content.chat-content::part(scroll) {
 .message-time { margin-top:4px; font-size:12px; opacity:.65; text-align:right; }
 
 
+.message-time { display: flex; align-items: center; gap: 4px; }
+.message-time .read { color: #3b82f6; }
+
