@@ -79,14 +79,16 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button
+    <div class="submit-button-container">
+      <ion-button
+        expand="block"
         color="primary"
         type="submit"
         [disabled]="productForm.invalid || selectedFiles.length === 0"
       >
-        <ion-icon name="send"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+        <ion-icon name="send" slot="start"></ion-icon>
+        Publicar Producto
+      </ion-button>
+    </div>
   </form>
 </ion-content>
