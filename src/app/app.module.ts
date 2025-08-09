@@ -30,6 +30,6 @@ import { RateUserModalComponent } from './components/rate-user-modal/rate-user-m
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]   // ← solo una vez
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] // ✅ permitir web components de Ionic
 })
 export class AppModule {}

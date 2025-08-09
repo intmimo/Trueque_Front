@@ -30,7 +30,11 @@ const routes: Routes = [
   {
     path: 'product-detail/:id',
     loadChildren: () => import('./pages/product-detail/product-detail.module').then( m => m.ProductDetailPageModule)
+  },  {
+    path: 'profile-edit',
+    loadChildren: () => import('./pages/profile-edit/profile-edit.module').then( m => m.ProfileEditPageModule)
   },
+
 ];
 
 @NgModule({

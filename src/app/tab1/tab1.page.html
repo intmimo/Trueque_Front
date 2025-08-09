@@ -1,6 +1,14 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Mi Perfil</ion-title>
+
+    <!-- Botón editar en el header -->
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="primary" (click)="irAEditarPerfil()">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
