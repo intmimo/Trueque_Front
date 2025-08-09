@@ -89,8 +89,15 @@ export class ProductPubliPage implements OnInit {
       await this.productService.createProduct(productData, this.selectedFiles).toPromise();
       
       await loading.dismiss();
+
+      // Limpiar el formulario
+      this.resetForm();
+
       this.presentToast('¡Producto publicado exitosamente!');
-      this.router.navigate(['/profile']);
+      // Redireccionar a tab1 con un pequeño delay para que se vea el toast
+      setTimeout(() => {
+        this.router.navigate(['/tab1'], { replaceUrl: true });
+      }, 500)
       
     } catch (error: any) {
       await loading.dismiss();
@@ -105,6 +112,18 @@ export class ProductPubliPage implements OnInit {
       }
       
       this.presentAlert(errorMessage);
+    }
+  }
+
+  private resetForm() {
+    this.productForm.reset();
+    this.selectedFiles = [];
+    this.imagePreviews = [];
+    
+    // Limpiar el input de archivos
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
   }
 
