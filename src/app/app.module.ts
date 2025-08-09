@@ -10,8 +10,6 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-// 📌 IMPORTA TU MODAL
 import { RateUserModalComponent } from './components/rate-user-modal/rate-user-modal.component';
 
 @NgModule({

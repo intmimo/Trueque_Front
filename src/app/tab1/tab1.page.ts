@@ -32,7 +32,18 @@ export class Tab1Page implements OnInit {
     private ratingService: RatingService
   ) {}
 
+  // Carga inicial (primera vez que se monta el componente)
   ngOnInit() {
+    this.refreshAll();
+  }
+
+  // Se ejecuta SIEMPRE que esta vista vuelve a activarse (por ejemplo, al regresar de editar perfil)
+  ionViewWillEnter() {
+    this.refreshAll();
+  }
+
+  /** Orquestador: pide perfil, productos y ratings */
+  private refreshAll() {
     const token = localStorage.getItem('token');
     if (!token) {
       console.error('No hay token guardado.');
@@ -41,16 +52,15 @@ export class Tab1Page implements OnInit {
 
     this.authService.getProfile().subscribe({
       next: (res) => {
-        // el backend devuelve { user: {...} }
-        this.user = res.user;
-        this.getUserProducts(this.user.id);
-        this.cargarMisProductos();
-        this.getLikesReceived(this.user.id);
-        this.loadRatings(this.user.id); // 👈 cargar rating promedio + lista
+        this.user = res.user; // { user: {...} } en tu backend
+        if (this.user?.id) {
+          this.getUserProducts(this.user.id);
+          this.cargarMisProductos();
+          this.getLikesReceived(this.user.id);
+          this.loadRatings(this.user.id);
+        }
       },
-      error: (err) => {
-        console.error('Error al cargar perfil:', err);
-      }
+      error: (err) => console.error('Error al cargar perfil:', err)
     });
   }
 
@@ -105,10 +115,9 @@ export class Tab1Page implements OnInit {
 
         this.ratingAvg = Number(avg) || 0;
         this.ratingCount = Number(total) || 0;
-        this.ratings = Array.isArray(items) ? items : [];
 
-        // Normalizamos cada rating
-        this.ratings = this.ratings.map((r: any) => ({
+        const raw = Array.isArray(items) ? items : [];
+        this.ratings = raw.map((r: any) => ({
           id: r.id,
           value: Number(r.value ?? r.stars ?? r.score ?? 0),
           comment: r.comment ?? '',
@@ -120,19 +129,21 @@ export class Tab1Page implements OnInit {
     });
   }
 
-
-
   // Utilidad para pintar 5 estrellas
   get stars(): number[] {
     return [1, 2, 3, 4, 5];
   }
   isFilledStar(index: number): boolean {
-    // si ratingAvg = 4.2 => se llenan 4
     return index <= Math.round(this.ratingAvg);
   }
 
   // Navegar a publicar
   irAPublicar() {
     this.router.navigate(['/product-publi']);
+  }
+
+  // Navegar a editar perfil
+  irAEditarPerfil() {
+    this.router.navigate(['/profile-edit']);
   }
 }
