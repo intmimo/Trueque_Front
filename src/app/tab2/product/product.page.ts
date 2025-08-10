@@ -27,8 +27,8 @@ loadProducts() {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const userId = user.id;
 
-  this.productService.getAllProducts(userId).subscribe(response => {
-    this.products = response.data;
+  this.productService.getAllProducts(userId).subscribe(products => {
+    this.products = products; // ya es response.data por el map
   });
 }
 

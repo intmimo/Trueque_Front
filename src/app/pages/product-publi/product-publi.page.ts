@@ -85,9 +85,9 @@ export class ProductPubliPage implements OnInit {
 
     try {
       const productData = this.productForm.value;
-      
+
       await this.productService.createProduct(productData, this.selectedFiles).toPromise();
-      
+
       await loading.dismiss();
 
       // Limpiar el formulario
@@ -98,19 +98,19 @@ export class ProductPubliPage implements OnInit {
       setTimeout(() => {
         this.router.navigate(['/tab1'], { replaceUrl: true });
       }, 500)
-      
+
     } catch (error: any) {
       await loading.dismiss();
       console.error('Error al crear producto:', error);
-      
+
       let errorMessage = 'Error al publicar el producto. Intenta de nuevo.';
-      
+
       if (error.error?.message) {
         errorMessage = error.error.message;
       } else if (error.status === 401) {
         errorMessage = 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.';
       }
-      
+
       this.presentAlert(errorMessage);
     }
   }
@@ -119,7 +119,7 @@ export class ProductPubliPage implements OnInit {
     this.productForm.reset();
     this.selectedFiles = [];
     this.imagePreviews = [];
-    
+
     // Limpiar el input de archivos
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     if (fileInput) {
