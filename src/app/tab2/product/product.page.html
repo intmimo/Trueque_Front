@@ -5,8 +5,61 @@
 </ion-header>
 
 <ion-content>
+  <!-- Barra de búsqueda -->
+  <ion-searchbar 
+    [(ngModel)]="searchTerm" 
+    (ionInput)="onSearchChange($event)"
+    placeholder="Buscar productos..."
+    debounce="300"
+    show-clear-button="focus">
+  </ion-searchbar>
+
+  <!-- Filtros como chips -->
+  <div class="filter-chips ion-padding-horizontal">
+    <ion-chip 
+      [outline]="selectedFilter !== 'all'" 
+      [color]="selectedFilter === 'all' ? 'primary' : 'medium'"
+      (click)="setFilter('all')">
+      <ion-icon name="apps-outline"></ion-icon>
+      <ion-label>Todos</ion-label>
+    </ion-chip>
+    
+    <ion-chip 
+      [outline]="selectedFilter !== 'name'" 
+      [color]="selectedFilter === 'name' ? 'primary' : 'medium'"
+      (click)="setFilter('name')">
+      <ion-icon name="pricetag-outline"></ion-icon>
+      <ion-label>Nombre</ion-label>
+    </ion-chip>
+    
+    <ion-chip 
+      [outline]="selectedFilter !== 'description'" 
+      [color]="selectedFilter === 'description' ? 'primary' : 'medium'"
+      (click)="setFilter('description')">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <ion-label>Descripción</ion-label>
+    </ion-chip>
+    
+    <ion-chip 
+      [outline]="selectedFilter !== 'user'" 
+      [color]="selectedFilter === 'user' ? 'primary' : 'medium'"
+      (click)="setFilter('user')">
+      <ion-icon name="person-outline"></ion-icon>
+      <ion-label>Usuario</ion-label>
+    </ion-chip>
+
+    <ion-chip 
+      [outline]="selectedFilter !== 'location'" 
+      [color]="selectedFilter === 'location' ? 'primary' : 'medium'"
+      (click)="setFilter('location')">
+      <ion-icon name="location-outline"></ion-icon>
+      <ion-label>Ubicación</ion-label>
+    </ion-chip>
+  </div>
+
+  <!-- Lista de productos -->
   <ion-list>
-    @for (product of products; track product.id) {
+    @for (product of filteredProducts; track product.id) {
     <ion-item (click)="verDetalle(product.id)">
       @if (product.images?.length > 0) {
       <ion-thumbnail slot="start">
@@ -14,25 +67,44 @@
       </ion-thumbnail>
       }
       <ion-label>
-        <h2>{{ product.name }}</h2>
-        <p>{{ product.description }}</p>
-        <!-- Aquí el usuario que publicó -->
+        <h2 [innerHTML]="highlightSearchTerm(product.name)"></h2>
+        <p [innerHTML]="highlightSearchTerm(product.description)"></p>
+        <!-- Usuario que publicó -->
         <div class="user-info" (click)="verPerfilPublico(product.user.id); $event.stopPropagation()"
           style="display: flex; align-items: center; cursor: pointer; margin-top: 6px;">
           <img
-  [src]="product.user && product.user.avatar ? ('http://localhost:8000/storage/' + product.user.avatar) : 'assets/images/avatar-placeholder.png'"
-  alt="Avatar"
-  style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px;">
-          <span>{{ product.user.name }}</span>
+            [src]="product.user && product.user.avatar ? ('http://localhost:8000/storage/' + product.user.avatar) : 'assets/images/avatar-placeholder.png'"
+            alt="Avatar"
+            style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px;">
+          <span [innerHTML]="highlightSearchTerm(product.user.name)"></span>
         </div>
       </ion-label>
     </ion-item>
     }
   </ion-list>
 
+  <!-- Mensajes de estado -->
+  @if (filteredProducts.length === 0 && products.length > 0) {
+  <div class="ion-text-center ion-padding">
+    <ion-icon name="search-outline" size="large" color="medium"></ion-icon>
+    <p>No se encontraron productos que coincidan con "{{ searchTerm }}"</p>
+    <ion-button fill="clear" (click)="clearSearch()">
+      Limpiar búsqueda
+    </ion-button>
+  </div>
+  }
+
   @if (products.length === 0) {
   <div class="ion-text-center ion-padding">
+    <ion-icon name="bag-outline" size="large" color="medium"></ion-icon>
     <p>No hay productos disponibles</p>
   </div>
   }
+
+  <!-- Botón flotante para refrescar -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="loadProducts()">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
