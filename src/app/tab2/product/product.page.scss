@@ -1,0 +1,92 @@
+// Estilos para resaltar términos de búsqueda
+mark {
+  background-color: var(--ion-color-warning);
+  color: var(--ion-color-warning-contrast);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+// Estilos para la barra de búsqueda
+ion-searchbar {
+  --background: var(--ion-color-light);
+  --border-radius: 8px;
+  margin: 8px 16px;
+  
+  .searchbar-input {
+    font-size: 16px;
+  }
+}
+
+// Estilos para el segmento de filtros
+ion-segment {
+  --background: var(--ion-color-light);
+  margin-bottom: 8px;
+  
+  ion-segment-button {
+    --indicator-color: var(--ion-color-primary);
+    --color-checked: var(--ion-color-primary);
+  }
+}
+
+// Estilos para la información del usuario
+.user-info {
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  img {
+    object-fit: cover;
+    border: 2px solid var(--ion-color-light);
+  }
+}
+
+// Estilos para mensajes de estado
+.ion-text-center {
+  ion-icon {
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+// Animación para los elementos de la lista
+ion-item {
+  --transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateX(4px);
+    --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Estilo para el botón flotante
+ion-fab-button {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+  
+  &:hover {
+    --background: var(--ion-color-primary-shade);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  ion-segment {
+    ion-segment-button {
+      ion-label {
+        font-size: 12px;
+      }
+    }
+  }
+  
+  ion-searchbar {
+    margin: 4px 8px;
+  }
+}
