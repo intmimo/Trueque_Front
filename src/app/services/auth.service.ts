@@ -22,15 +22,22 @@ export class AuthService {
 
 
     //funcion de la pagina de registro de usuario
-  register(nombre: string, email: string, password: string, colonia: string, municipio: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/register`, {
-      name: nombre,
-      email,
-      password,
-      password_confirmation: password, // <- IMPORTANTE
-      colonia,
-      municipio
-    });
+  register(nombre: string, email: string, password: string, colonia: string, municipio: string, foto?: File | null): Observable<any> {
+    const formData = new FormData();
+    
+    formData.append('name', nombre);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('password_confirmation', password);
+    formData.append('colonia', colonia);
+    formData.append('municipio', municipio);
+    
+    // Agregar foto si existe
+    if (foto) {
+      formData.append('profile_photo', foto);
+    }
+
+    return this.http.post(`${this.API_URL}/register`, formData);
   }
 
   //funcion de la pagina de inicio de sesion

@@ -17,6 +17,26 @@
       <div class="form-card">
         <form [formGroup]="registroForm" (ngSubmit)="registrarse()" class="registro-form">
 
+          <!-- Foto de perfil -->
+          <div class="form-group">
+            <div class="photo-upload-section">
+              <h3 class="section-title">
+                <span class="title-indicator"></span>
+                Foto de perfil (opcional)
+              </h3>
+              <div class="photo-container">
+                <div class="photo-preview" (click)="triggerFileInput()">
+                  <img *ngIf="fotoPreview; else noPhoto" [src]="fotoPreview" alt="Foto de perfil">
+                  <ng-template #noPhoto>
+                    <ion-icon name="camera-outline" class="camera-icon"></ion-icon>
+                    <p class="photo-text">Toca para agregar foto</p>
+                  </ng-template>
+                </div>
+                <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+              </div>
+            </div>
+          </div>
+          
           <!-- Campo Nombre -->
           <div class="form-group">
             <ion-item class="form-item" lines="none">
