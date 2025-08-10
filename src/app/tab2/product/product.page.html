@@ -7,23 +7,32 @@
 <ion-content>
   <ion-list>
     @for (product of products; track product.id) {
-      <ion-item (click)="verDetalle(product.id)">
-        @if (product.images?.length > 0) {
-          <ion-thumbnail slot="start">
-            <img [src]="'http://localhost:8000/storage/' + product.images[0].image_path">
-          </ion-thumbnail>
-        }
-        <ion-label>
-          <h2>{{ product.name }}</h2>
-          <p>{{ product.description }}</p>
-        </ion-label>
-      </ion-item>
+    <ion-item (click)="verDetalle(product.id)">
+      @if (product.images?.length > 0) {
+      <ion-thumbnail slot="start">
+        <img [src]="'http://localhost:8000/storage/' + product.images[0].image_path">
+      </ion-thumbnail>
+      }
+      <ion-label>
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <!-- Aquí el usuario que publicó -->
+        <div class="user-info" (click)="verPerfilPublico(product.user.id); $event.stopPropagation()"
+          style="display: flex; align-items: center; cursor: pointer; margin-top: 6px;">
+          <img
+  [src]="product.user && product.user.avatar ? ('http://localhost:8000/storage/' + product.user.avatar) : 'assets/images/avatar-placeholder.png'"
+  alt="Avatar"
+  style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px;">
+          <span>{{ product.user.name }}</span>
+        </div>
+      </ion-label>
+    </ion-item>
     }
   </ion-list>
 
   @if (products.length === 0) {
-    <div class="ion-text-center ion-padding">
-      <p>No hay productos disponibles</p>
-    </div>
+  <div class="ion-text-center ion-padding">
+    <p>No hay productos disponibles</p>
+  </div>
   }
 </ion-content>

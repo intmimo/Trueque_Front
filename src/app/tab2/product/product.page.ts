@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 import { ProductService } from 'src/app/services/product.service';
 
 @Component({
@@ -14,20 +15,30 @@ export class ProductPage implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
     this.loadProducts();
   }
 
-  loadProducts() {
-    this.productService.getAllProducts().subscribe(response => {
-      this.products = response.data;
-    });
-  }
+loadProducts() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user.id;
+
+  this.productService.getAllProducts(userId).subscribe(response => {
+    this.products = response.data;
+  });
+}
+
+
 
   verDetalle(id: number) {
     this.router.navigate(['/product-detail', id]);
   }
+
+  verPerfilPublico(userId: number) {
+  this.router.navigate(['/profile-public', userId]);
+}
 }
