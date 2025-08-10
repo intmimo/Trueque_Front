@@ -117,11 +117,14 @@
         }
       </div>
     </ion-accordion>
-      <button (click)="logout()" class="btn-logout">
-  Cerrar sesión
-</button>
   </ion-accordion-group>
 
-
-
+  <!-- boton de cerrar sesion -->
+  <ion-button
+    expand="block"
+    color="danger"
+    class="ion-margin"
+    (click)="logout()">
+    Cerrar sesión
+  </ion-button>
 </ion-content>
