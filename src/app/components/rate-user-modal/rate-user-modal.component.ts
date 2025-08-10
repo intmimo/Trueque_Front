@@ -34,7 +34,7 @@ export class RateUserModalComponent {
     if (!this.stars) return;
 
     this.sending = true;
-    this.ratingService.rateUser(this.userId, this.stars, this.comment).subscribe({
+    this.ratingService.rateUser(this.userId, this.stars).subscribe({
       next: (res) => {
         this.sending = false;
         // Devolvemos un OK al cerrar para que el padre refresque si quiere

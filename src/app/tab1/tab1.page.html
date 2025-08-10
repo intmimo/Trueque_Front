@@ -17,8 +17,9 @@
   <!-- Tarjeta de cabecera: avatar + nombre + ubicación + rating -->
   <div class="profile-header">
     <div class="avatar">
-      <img [src]="'https://ui-avatars.com/api/?name=' + (user?.name || 'User') + '&background=0ea5e9&color=fff&size=128'"
-           alt="avatar">
+      <img
+        [src]="'https://ui-avatars.com/api/?name=' + (user?.name || 'User') + '&background=0ea5e9&color=fff&size=128'"
+        alt="avatar">
     </div>
     <div class="info">
       <h2>{{ user?.name || 'Usuario' }}</h2>
@@ -28,11 +29,13 @@
       </p>
 
       <div class="rating-row">
-        <span *ngFor="let s of stars; let i = index"
-              [class.filled]="isFilledStar(i+1)">★</span>
-        <small class="score">{{ ratingAvg | number:'1.1-2' }}/5</small>
-        <small class="count">({{ ratingCount }} calif.)</small>
+        @for (item of starsWithIndex; track item.index) {
+          <span [class.filled]="isFilledStar(item.index + 1)">★</span>
+        }
+        <small class="count">({{ ratingCount > 0 ? ratingCount + ' calif.' : 'sin calificaciones' }})</small>
+
       </div>
+
     </div>
   </div>
 
@@ -50,28 +53,32 @@
     </ion-list-header>
   </ion-list>
 
-  <div class="products-grid" *ngIf="products?.length; else noProducts">
-    <div class="product-card" *ngFor="let p of products">
-      <div class="thumb">
-        <img [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
-             alt="{{ p.name }}">
-      </div>
-      <div class="details">
-        <h4>{{ p.name }}</h4>
-        <span class="status" [class.disponible]="p.status === 'disponible'"
-                             [class.intercambiado]="p.status === 'intercambiado'">
-          {{ p.status | titlecase }}
-        </span>
-      </div>
+  @if (products.length) {
+    <div class="products-grid">
+      @for (p of products; track p.id) {
+        <div class="product-card">
+          <div class="thumb">
+            <img
+              [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
+              alt="{{ p.name }}">
+          </div>
+          <div class="details">
+            <h4>{{ p.name }}</h4>
+            <span class="status" [class.disponible]="p.status === 'disponible'"
+              [class.intercambiado]="p.status === 'intercambiado'">
+              {{ p.status | titlecase }}
+            </span>
+          </div>
+        </div>
+      }
     </div>
-  </div>
-
-  <ng-template #noProducts>
+  }
+  @else {
     <div class="empty">
       <ion-icon name="cube-outline"></ion-icon>
       <p>Aún no has publicado productos</p>
     </div>
-  </ng-template>
+  }
 
   <!-- Historial de calificaciones recibidas -->
   <ion-accordion-group>
@@ -80,28 +87,41 @@
         <ion-label>Historial de calificaciones recibidas</ion-label>
       </ion-item>
       <div class="ratings-list" slot="content">
-        <div class="rating-item" *ngFor="let r of ratings">
-          <div class="rater">
-            <img [src]="'https://ui-avatars.com/api/?name=' + (r.rater?.name || 'User') + '&background=9ca3af&color=fff&size=64'"
-                 alt="rater">
-            <div>
-              <h5>{{ r.rater?.name || 'Usuario' }}</h5>
-              <small>{{ r.created_at | date:'medium' }}</small>
+        @for (r of ratings; track r.id) {
+          <div class="rating-item">
+            <div class="rater">
+              <img
+                [src]="'https://ui-avatars.com/api/?name=' + (r.rater?.name || 'User') + '&background=9ca3af&color=fff&size=64'"
+                alt="rater">
+              <div>
+                <h5>{{ r.rater?.name || 'Usuario' }}</h5>
+                <small>{{ r.created_at | date:'medium' }}</small>
+              </div>
             </div>
+            <div class="stars">
+              @for (s of starsWithIndex; track s.index) {
+                <span [class.filled]="(s.index + 1) <= r.value">★</span>
+              }
+              <small class="value">{{ r.value }}/5</small>
+            </div>
+            @if (r.comment) {
+              <p class="comment">{{ r.comment }}</p>
+            }
           </div>
-          <div class="stars">
-            <span *ngFor="let s of stars; let i = index" [class.filled]="(i+1) <= r.value">★</span>
-            <small class="value">{{ r.value }}/5</small>
+        }
+        @if (!ratings.length) {
+          <div class="empty">
+            <ion-icon name="star-outline"></ion-icon>
+            <p>Aún no has recibido calificaciones</p>
           </div>
-          <p class="comment" *ngIf="r.comment">{{ r.comment }}</p>
-        </div>
-
-        <div class="empty" *ngIf="!ratings.length">
-          <ion-icon name="star-outline"></ion-icon>
-          <p>Aún no has recibido calificaciones</p>
-        </div>
+        }
       </div>
     </ion-accordion>
+      <button (click)="logout()" class="btn-logout">
+  Cerrar sesión
+</button>
   </ion-accordion-group>
+
+
 
 </ion-content>

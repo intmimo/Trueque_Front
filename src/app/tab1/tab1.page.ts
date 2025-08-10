@@ -105,29 +105,21 @@ export class Tab1Page implements OnInit {
   }
 
   // ⭐ Cargar ratings (promedio + lista)
-  loadRatings(userId: number) {
-    this.ratingService.getUserRatings(userId).subscribe({
-      next: (res) => {
-        // Tolerante a distintas estructuras de respuesta:
-        const avg = res.average ?? res.data?.average ?? res.summary?.average ?? 0;
-        const total = res.total ?? res.count ?? res.data?.total ?? res.summary?.count ?? 0;
-        const items = res.ratings ?? res.data?.ratings ?? res.data ?? [];
+loadRatings(userId: number) {
+  this.ratingService.getUserRatings(userId).subscribe({
+    next: (res) => {
+      console.log('Respuesta ratings:', res);
 
-        this.ratingAvg = Number(avg) || 0;
-        this.ratingCount = Number(total) || 0;
+      this.ratingAvg = Number(res.average_rating) || 0;
+      this.ratingCount = Number(res.rating_count) || 0;
 
-        const raw = Array.isArray(items) ? items : [];
-        this.ratings = raw.map((r: any) => ({
-          id: r.id,
-          value: Number(r.value ?? r.stars ?? r.score ?? 0),
-          comment: r.comment ?? '',
-          created_at: r.created_at ?? r.date ?? '',
-          rater: r.rater ?? r.user ?? r.author ?? null // quien calificó
-        }));
-      },
-      error: (err) => console.error('Error al cargar ratings:', err)
-    });
-  }
+      this.ratings = []; // No hay lista de ratings en esta respuesta
+    },
+    error: (err) => console.error('Error al cargar ratings:', err)
+  });
+}
+
+
 
   // Utilidad para pintar 5 estrellas
   get stars(): number[] {
@@ -145,5 +137,24 @@ export class Tab1Page implements OnInit {
   // Navegar a editar perfil
   irAEditarPerfil() {
     this.router.navigate(['/profile-edit']);
+  }
+
+  get starsWithIndex() {
+  return this.stars.map((_, i) => ({ index: i }));
+}
+
+logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Error al cerrar sesión', err);
+        // Puedes mostrar mensaje de error o forzar logout local igual
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

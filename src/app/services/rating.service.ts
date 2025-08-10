@@ -1,50 +1,59 @@
-// src/app/services/rating.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RatingService {
-  private API_URL = 'http://localhost:8000/api';
+  private apiUrl = 'http://localhost:8000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  /** Headers con token */
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+  // Como tus endpoints son públicos, no es necesario enviar Authorization
+  private getHeaders(): HttpHeaders {
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`
+      'Content-Type': 'application/json'
     });
   }
 
-  /** Calificar a un usuario (1 a 5). Opcional: comment */
-  rateUser(ratedUserId: number, value: number, comment?: string): Observable<any> {
-    if (value < 1 || value > 5) {
-      return throwError(() => new Error('El valor de la calificación debe estar entre 1 y 5.'));
-    }
-    const body: any = { rated_user_id: ratedUserId, value };
-    if (comment?.trim()) body.comment = comment.trim();
-
-    return this.http.post(`${this.API_URL}/ratings`, body, {
-      headers: this.getAuthHeaders()
-    });
+  rateUser(toUserId: number, stars: number, comment?: string): Observable<any> {
+  const body: any = { stars };
+  if (comment) {
+    body.comment = comment;
   }
+  return this.http.post(
+    `${this.apiUrl}/rate/${toUserId}`,
+    body,
+    { headers: this.getAuthHeaders() }
+  );
+}
 
-  /** Listado de calificaciones recibidas + summary */
-  getUserRatings(userId: number): Observable<any> {
-    return this.http.get(`${this.API_URL}/users/${userId}/ratings`, {
-      headers: this.getAuthHeaders()
-    });
+private getAuthHeaders(): HttpHeaders {
+  const token = localStorage.getItem('token');
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json'
+  });
+  if (token) {
+    headers = headers.set('Authorization', `Bearer ${token}`);
   }
+  return headers;
+}
 
-  /** (Opcional) Solo resumen */
-  getUserRatingSummary(userId: number): Observable<any> {
-    return this.http.get(`${this.API_URL}/users/${userId}/rating/summary`, {
-      headers: this.getAuthHeaders()
-    });
-  }
 
+
+  getUserRatingSummary(toUserId: number): Observable<any> {
+  return this.http.get(
+    `${this.apiUrl}/rating/${toUserId}`,
+    { headers: this.getAuthHeaders() }  // <-- Cambiado para enviar token
+  );
+}
+
+  getUserRatings(toUserId: number): Observable<any> {
+  return this.http.get(
+    `${this.apiUrl}/rating/${toUserId}`,
+    { headers: this.getAuthHeaders() }
+  );
+}
 
 }
