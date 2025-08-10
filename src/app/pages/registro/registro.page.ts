@@ -13,6 +13,8 @@ import Swal from 'sweetalert2';
 export class RegistroPage implements OnInit {
 
   registroForm: FormGroup;
+  fotoPreview: string | null = null;
+  selectedFile: File | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -29,6 +31,50 @@ export class RegistroPage implements OnInit {
     }, {
       validators: this.passwordsIguales
     });
+  }
+
+  // Función para abrir selector de archivos
+  triggerFileInput() {
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fileInput?.click();
+  }
+
+
+  // Manejar selección de archivo
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Archivo inválido',
+          text: 'Por favor selecciona una imagen válida.',
+          confirmButtonColor: '#ef4444'
+        });
+        return;
+      }
+
+      // Validar tamaño (2MB max)
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Archivo muy grande',
+          text: 'La imagen debe ser menor a 2MB.',
+          confirmButtonColor: '#ef4444'
+        });
+        return;
+      }
+
+      this.selectedFile = file;
+
+      // Crear preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.fotoPreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   //funcion que revisa las contras iguales
@@ -76,7 +122,7 @@ export class RegistroPage implements OnInit {
     });
 
     //funcion y alerta de que se registró correctamente
-    this.authService.register(nombre, email, password, colonia, municipio).subscribe({
+    this.authService.register(nombre, email, password, colonia, municipio, this.selectedFile).subscribe({
       next: (res) => {
         Swal.fire({
           icon: 'success',
