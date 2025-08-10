@@ -29,11 +29,11 @@ getAllProducts(excludeUserId?: number): Observable<any> {
 }
 
 
-  getProductById(id: number) {
-    return this.http.get<any>(`${this.apiUrl}/products/${id}`).pipe(
-      map(response => response.data)
-    );
-  }
+getProductById(id: number) {
+  return this.http.get<any>(`${this.apiUrl}/products/${id}`, {
+    headers: this.getAuthHeaders()
+  });
+}
 
   createProduct(productData: any, images: File[]): Observable<any> {
     const formData = new FormData();
@@ -70,4 +70,16 @@ getAllProducts(excludeUserId?: number): Observable<any> {
       headers: this.getAuthHeaders()
     });
   }
+
+  likeProduct(id: number) {
+  return this.http.post<any>(`${this.apiUrl}/products/${id}/like`, {}, {
+    headers: this.getAuthHeaders()
+  });
+}
+
+unlikeProduct(id: number) {
+  return this.http.delete<any>(`${this.apiUrl}/products/${id}/unlike`, {
+    headers: this.getAuthHeaders()
+  });
+}
 }

@@ -30,9 +30,11 @@
 
       <div class="rating-row">
         @for (item of starsWithIndex; track item.index) {
-          <span [class.filled]="isFilledStar(item.index + 1)">★</span>
+        <span [class.filled]="isFilledStar(item.index + 1)">★</span>
         }
+        <small class="count">{{ratingAvg}}</small>
         <small class="count">({{ ratingCount > 0 ? ratingCount + ' calif.' : 'sin calificaciones' }})</small>
+
 
       </div>
 
@@ -53,32 +55,38 @@
     </ion-list-header>
   </ion-list>
 
-  @if (products.length) {
-    <div class="products-grid">
-      @for (p of products; track p.id) {
-        <div class="product-card">
-          <div class="thumb">
-            <img
-              [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
-              alt="{{ p.name }}">
-          </div>
-          <div class="details">
-            <h4>{{ p.name }}</h4>
-            <span class="status" [class.disponible]="p.status === 'disponible'"
-              [class.intercambiado]="p.status === 'intercambiado'">
-              {{ p.status | titlecase }}
-            </span>
-          </div>
+  <div class="products-grid">
+    @for (p of products; track p.id) {
+    <div class="product-card">
+      <div class="thumb">
+        <img
+          [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
+          alt="{{ p.name }}" />
+      </div>
+      <div class="details">
+        <h4>{{ p.name }}</h4>
+        <div class="info-row">
+          <span class="likes" [attr.aria-label]="'Cantidad de likes: ' + p.likes_count">
+            <ion-icon name="heart"></ion-icon> {{ p.likes_count }}
+          </span>
+          <span class="status" [class.disponible]="p.status === 'disponible'"
+            [class.intercambiado]="p.status === 'intercambiado'">
+            {{ p.status | titlecase }}
+          </span>
         </div>
-      }
+      </div>
     </div>
+    }
+  </div>
+
+  @if (!products.length) {
+  <div class="empty">
+    <ion-icon name="cube-outline"></ion-icon>
+    <p>Aún no has publicado productos</p>
+  </div>
   }
-  @else {
-    <div class="empty">
-      <ion-icon name="cube-outline"></ion-icon>
-      <p>Aún no has publicado productos</p>
-    </div>
-  }
+
+
 
   <!-- Historial de calificaciones recibidas -->
   <ion-accordion-group>
@@ -88,43 +96,39 @@
       </ion-item>
       <div class="ratings-list" slot="content">
         @for (r of ratings; track r.id) {
-          <div class="rating-item">
-            <div class="rater">
-              <img
-                [src]="'https://ui-avatars.com/api/?name=' + (r.rater?.name || 'User') + '&background=9ca3af&color=fff&size=64'"
-                alt="rater">
-              <div>
-                <h5>{{ r.rater?.name || 'Usuario' }}</h5>
-                <small>{{ r.created_at | date:'medium' }}</small>
-              </div>
+        <div class="rating-item">
+          <div class="rater">
+            <img
+              [src]="'https://ui-avatars.com/api/?name=' + (r.rater?.name || 'User') + '&background=9ca3af&color=fff&size=64'"
+              alt="rater">
+            <div>
+              <h5>{{ r.rater?.name || 'Usuario' }}</h5>
+              <small>{{ r.created_at | date:'medium' }}</small>
             </div>
-            <div class="stars">
-              @for (s of starsWithIndex; track s.index) {
-                <span [class.filled]="(s.index + 1) <= r.value">★</span>
-              }
-              <small class="value">{{ r.value }}/5</small>
-            </div>
-            @if (r.comment) {
-              <p class="comment">{{ r.comment }}</p>
-            }
           </div>
+          <div class="stars">
+            @for (s of starsWithIndex; track s.index) {
+            <span [class.filled]="(s.index + 1) <= r.value">★</span>
+            }
+            <small class="value">{{ r.value }}/5</small>
+          </div>
+          @if (r.comment) {
+          <p class="comment">{{ r.comment }}</p>
+          }
+        </div>
         }
         @if (!ratings.length) {
-          <div class="empty">
-            <ion-icon name="star-outline"></ion-icon>
-            <p>Aún no has recibido calificaciones</p>
-          </div>
+        <div class="empty">
+          <ion-icon name="star-outline"></ion-icon>
+          <p>Aún no has recibido calificaciones</p>
+        </div>
         }
       </div>
     </ion-accordion>
   </ion-accordion-group>
 
   <!-- boton de cerrar sesion -->
-  <ion-button
-    expand="block"
-    color="danger"
-    class="ion-margin"
-    (click)="logout()">
+  <ion-button expand="block" color="danger" class="ion-margin" (click)="logout()">
     Cerrar sesión
   </ion-button>
 </ion-content>

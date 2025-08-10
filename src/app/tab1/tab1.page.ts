@@ -57,7 +57,6 @@ export class Tab1Page implements OnInit {
         if (this.user?.id) {
           this.getUserProducts(this.user.id);
           this.cargarMisProductos();
-          this.getLikesReceived(this.user.id);
           this.loadRatings(this.user.id);
         }
       },
@@ -93,17 +92,6 @@ export class Tab1Page implements OnInit {
       });
   }
 
-  // Likes recibidos (si ya lo usas)
-  getLikesReceived(userId: number) {
-    this.http.get<any>(`${this.API_URL}/users/${userId}/liked-by-others`, { headers: this.getAuthHeaders() })
-      .subscribe({
-        next: (res) => {
-          // depende de cómo lo devuelva tu backend:
-          this.likes = res.likes_received || res.data || [];
-        },
-        error: (err) => console.error('Error al obtener likes:', err)
-      });
-  }
 
   // ⭐ Cargar ratings (promedio + lista)
 loadRatings(userId: number) {
@@ -119,9 +107,6 @@ loadRatings(userId: number) {
     error: (err) => console.error('Error al cargar ratings:', err)
   });
 }
-
-
-
   // Utilidad para pintar 5 estrellas
   get stars(): number[] {
     return [1, 2, 3, 4, 5];
