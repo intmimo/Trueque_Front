@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 import { ProductService } from 'src/app/services/product.service';
 
 @Component({
@@ -11,25 +11,34 @@ import { ProductService } from 'src/app/services/product.service';
 })
 export class ProductPage implements OnInit {
 
-  products : any [] = [];
+  products: any[] = [];
 
-  constructor(private pro_service: ProductService,
+  constructor(
+    private productService: ProductService,
     private router: Router,
-  private http: HttpClient, ) { }
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
-this.http.get('http://localhost:8000/api/products').subscribe((res: any) => {
-      this.products = res.data.map((p: any) => ({
-        ...p,
-        firstImage: p.images?.[0]?.image_path
-          ? `http://localhost:8000/storage/${p.images[0].image_path}`
-          : null
-      }));
-    });
+    this.loadProducts();
   }
+
+loadProducts() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user.id;
+
+  this.productService.getAllProducts(userId).subscribe(products => {
+    this.products = products; // ya es response.data por el map
+  });
+}
+
+
 
   verDetalle(id: number) {
     this.router.navigate(['/product-detail', id]);
   }
 
+  verPerfilPublico(userId: number) {
+  this.router.navigate(['/profile-public', userId]);
+}
 }

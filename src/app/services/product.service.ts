@@ -10,21 +10,24 @@ export class ProductService {
 
   private apiUrl = 'http://localhost:8000/api';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   private getAuthHeaders() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || '';
     return {
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`
     };
   }
-
-  getAllProducts() {
-    return this.http.get<any>(`${this.apiUrl}/products`).pipe(
-      map(response => response.data)
-    );
+getAllProducts(excludeUserId?: number): Observable<any> {
+  let endpoint = `${this.apiUrl}/products`;
+  if (excludeUserId) {
+    endpoint += `?exclude_user=${excludeUserId}`;
   }
+  return this.http.get<any>(endpoint).pipe(
+    map(response => response.data) // Extraer data aquí para simplificar
+  );
+}
+
 
   getProductById(id: number) {
     return this.http.get<any>(`${this.apiUrl}/products/${id}`).pipe(
@@ -34,15 +37,15 @@ export class ProductService {
 
   createProduct(productData: any, images: File[]): Observable<any> {
     const formData = new FormData();
-    
-    // Agregar los datos del producto
+
+    // Datos del producto
     formData.append('name', productData.title);
     formData.append('description', productData.description);
     formData.append('wanted_item', productData.wantedItem);
     formData.append('location', productData.location || '');
-    formData.append('status', 'disponible'); // Por defecto
-    
-    // Agregar las imágenes
+    formData.append('status', 'disponible');
+
+    // Imágenes
     images.forEach((image, index) => {
       formData.append(`images[${index}]`, image);
     });

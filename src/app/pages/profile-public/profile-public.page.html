@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ user ? 'Perfil de ' + user.name : 'Perfil de Usuario' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (!user) {
+    <div class="ion-text-center ion-padding">
+      <ion-spinner></ion-spinner>
+      <p>Cargando usuario...</p>
+    </div>
+  }
+
+  @if (user) {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ user.name }}</ion-card-title>
+        <ion-card-subtitle>
+          ⭐ {{ averageRating | number:'1.1-1' }} / 5
+          <small>({{ totalRatings }} votos)</small>
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Email:</strong> {{ user.email || 'No disponible' }}</p>
+        <p><strong>Colonia:</strong> {{ user.colonia || 'No especificada' }}</p>
+        <p><strong>Municipio:</strong> {{ user.municipio || 'No especificado' }}</p>
+
+        <!-- Bloque para calificar con @for -->
+        <div class="rating-section ion-margin-top">
+          <h4>Calificar usuario</h4>
+          <div class="rating-stars">
+            @for (star of [1,2,3,4,5]; track star) {
+              <ion-icon
+                [name]="star <= selectedStars ? 'star' : 'star-outline'"
+                (click)="setStars(star)"
+                [style.color]="star <= selectedStars ? '#ffd700' : '#ccc'"
+                style="font-size: 28px; cursor: pointer; margin: 0 2px;">
+              </ion-icon>
+            }
+          </div>
+          <ion-button
+            expand="block"
+            color="primary"
+            class="ion-margin-top"
+            [disabled]="isSubmitting || selectedStars === 0"
+            (click)="submitRating()">
+            {{ isSubmitting ? 'Enviando...' : 'Enviar Calificación' }}
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list>
+      <ion-list-header>
+        Productos publicados
+      </ion-list-header>
+
+      @if (products.length === 0) {
+        <ion-item>
+          <ion-label>No hay productos publicados por este usuario.</ion-label>
+        </ion-item>
+      }
+
+      @for (product of products; track product.id) {
+        <ion-item button (click)="verDetalle(product.id)">
+          @if (product.images && product.images.length > 0) {
+            <ion-thumbnail slot="start">
+              <img
+                [src]="'http://localhost:8000/storage/' + product.images[0].image_path"
+                [alt]="product.name"
+                (error)="onImageError($event)" />
+            </ion-thumbnail>
+          } @else {
+            <ion-thumbnail slot="start">
+              <div class="no-image-placeholder">
+                <ion-icon name="image-outline" size="large"></ion-icon>
+              </div>
+            </ion-thumbnail>
+          }
+          <ion-label>
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end"></ion-icon>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>

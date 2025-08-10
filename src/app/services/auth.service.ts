@@ -55,6 +55,15 @@ updateProfile(payload: any): Observable<any> {
     });
   }
 
+    logout() {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.post(`${this.API_URL}/logout`, {}, { headers });
+  }
+
 
 
 }
