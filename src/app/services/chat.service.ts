@@ -61,6 +61,10 @@ export class ChatService {
     this.echo.private(channelName)
       .listen('.message.sent', (e: any) => {
         callback(e);
+      })
+      // ✅ NUEVO: escuchar lecturas para palomitas
+      .listen('.message.read', (e: any) => {
+        callback({ __type: 'read', ...e });
       });
 
     this.activeChannels.add(channelName);
@@ -114,9 +118,29 @@ export class ChatService {
     });
   }
 
+  // ✅ NUEVO: marcar mensajes del chat como leídos (dispara palomitas)
+  markRead(chatId: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/chats/${chatId}/read`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
+  // ✅ NUEVO: eliminar mensaje (solo autor)
+  deleteMessage(messageId: number): Observable<any> {
+    return this.http.delete(`${this.API_URL}/messages/${messageId}`, {
+      headers: this.getHeaders()
+    });
+  }
+
   // 🔹 Iniciar un nuevo chat con un usuario
   startChat(userId: number): Observable<any> {
     return this.http.post(`${this.API_URL}/chats/start`, { user_id: userId }, {
+      headers: this.getHeaders()
+    });
+  }
+
+  deleteChat(chatId: number): Observable<any> {
+    return this.http.delete(`${this.API_URL}/chats/${chatId}`, {
       headers: this.getHeaders()
     });
   }

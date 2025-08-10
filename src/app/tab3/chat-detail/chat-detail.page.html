@@ -10,17 +10,43 @@
 <ion-content #content [fullscreen]="true" class="chat-content">
   <div class="messages-list">
     <ng-container *ngFor="let msg of messages">
-      <div class="message-bubble" [ngClass]="{ 'sent': msg.sentByUser, 'received': !msg.sentByUser }">
-        <div *ngIf="msg.imageUrl" class="message-image">
+      <div
+        class="message-bubble"
+        [ngClass]="{ 'sent': msg.sentByUser, 'received': !msg.sentByUser }"
+        (contextmenu)="msg.sentByUser && confirmDeleteMessage(msg); $event.preventDefault()"
+        (press)="msg.sentByUser && confirmDeleteMessage(msg)"
+      >
+        <!-- Estado eliminado -->
+        <div *ngIf="msg.deleted" class="message-deleted">Mensaje eliminado</div>
+
+        <!-- Imagen -->
+        <div *ngIf="!msg.deleted && msg.imageUrl" class="message-image">
           <img [src]="msg.imageUrl" alt="imagen" (load)="onImageLoaded()" />
         </div>
-        <div *ngIf="msg.text" class="message-text">{{ msg.text }}</div>
-        <div class="message-time">{{ msg.time }}</div>
+
+        <!-- Texto -->
+        <div *ngIf="!msg.deleted && msg.text" class="message-text">{{ msg.text }}</div>
+
+        <!-- Footer con hora, palomitas y papelera -->
+        <div class="message-time" *ngIf="!msg.deleted">
+          {{ msg.time }}
+          <ion-icon *ngIf="msg.sentByUser && !msg.readAt" name="checkmark-outline"></ion-icon>
+          <ion-icon *ngIf="msg.sentByUser && msg.readAt" name="checkmark-done-outline" class="read"></ion-icon>
+          <ion-icon
+            *ngIf="msg.sentByUser"
+            name="trash-outline"
+            class="delete-icon"
+            (click)="confirmDeleteMessage(msg)"
+          ></ion-icon>
+        </div>
       </div>
     </ng-container>
   </div>
 
-  <!-- 🔒 Composer fijo DENTRO del content -->
+  <!-- Espaciador para que el último mensaje no quede debajo del composer -->
+  <div class="bottom-spacer"></div>
+
+  <!-- Composer fijo -->
   <ion-toolbar class="composer-toolbar" slot="fixed">
     <ion-item lines="none">
       <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"></ion-input>

@@ -12,13 +12,13 @@
     <ion-card class="form-card">
       <ion-card-header>
         <ion-card-title>Imágenes del producto</ion-card-title>
-        <ion-card-subtitle>Puedes subir hasta 5 imágenes</ion-card-subtitle>
+        <ion-card-subtitle>Puedes subir hasta 10 imágenes</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
         <input
           type="file"
           multiple
-          accept="image/png, image/jpeg"
+          accept="image/png, image/jpeg, image/gif, image/webp, image/jpg"
           (change)="onImageSelected($event)"
         />
 
@@ -70,7 +70,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Ubicación (opcional)</ion-label>
+          <ion-label position="stacked">Ubicación</ion-label>
           <ion-input
             formControlName="location"
             placeholder="Ej. Oaxaca, CDMX"
@@ -79,14 +79,16 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button
+    <div class="submit-button-container">
+      <ion-button
+        expand="block"
         color="primary"
         type="submit"
-        [disabled]="productForm.invalid"
+        [disabled]="productForm.invalid || selectedFiles.length === 0"
       >
-        <ion-icon name="send"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+        <ion-icon name="send" slot="start"></ion-icon>
+        Publicar Producto
+      </ion-button>
+    </div>
   </form>
 </ion-content>
