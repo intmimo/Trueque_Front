@@ -29,10 +29,15 @@ const routes: Routes = [
   },
   {
     path: 'product-detail/:id',
-    loadChildren: () => import('./pages/product-detail/product-detail.module').then( m => m.ProductDetailPageModule)
-  },  {
+    loadChildren: () => import('./pages/product-detail/product-detail.module').then(m => m.ProductDetailPageModule)
+  },
+  {
     path: 'profile-edit',
-    loadChildren: () => import('./pages/profile-edit/profile-edit.module').then( m => m.ProfileEditPageModule)
+    loadChildren: () => import('./pages/profile-edit/profile-edit.module').then(m => m.ProfileEditPageModule)
+  },
+  {
+    path: 'profile-public/:id',
+    loadChildren: () => import('./pages/profile-public/profile-public.module').then(m => m.ProfilePublicPageModule)
   },
 
 ];
@@ -43,4 +48,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
