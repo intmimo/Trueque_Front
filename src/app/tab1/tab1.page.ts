@@ -3,6 +3,7 @@ import { AuthService } from '../services/auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { RatingService } from '../services/rating.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-tab1',
@@ -143,18 +144,87 @@ loadRatings(userId: number) {
   return this.stars.map((_, i) => ({ index: i }));
 }
 
+//funcion de cerrar sesion
 logout() {
-    this.authService.logout().subscribe({
-      next: () => {
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        console.error('Error al cerrar sesión', err);
-        // Puedes mostrar mensaje de error o forzar logout local igual
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-      }
-    });
+  Swal.fire({
+    title: '¿Quieres cerrar sesión?',
+    text: 'Se cerrará tu sesión actual',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#ef4444',
+    cancelButtonColor: '#38bdf8',
+    backdrop: true,
+    allowOutsideClick: true,
+    allowEscapeKey: true,
+    heightAuto: false,
+    customClass: {
+      container: 'custom-swal-container'
+    },
+    didOpen: () => {
+      this.fixSwalContainer();
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.authService.logout().subscribe({
+        next: () => {
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'success',
+            title: 'Sesión cerrada',
+            text: 'Has cerrado sesión correctamente.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#38bdf8',
+            backdrop: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            heightAuto: false,
+            customClass: {
+              container: 'custom-swal-container'
+            },
+            didOpen: () => {
+              this.fixSwalContainer();
+            }
+          }).then(() => {
+            this.router.navigate(['/login']);
+          });
+        },
+        error: (err) => {
+          console.error('Error al cerrar sesión', err);
+          localStorage.removeItem('token');
+          Swal.fire({
+            icon: 'warning',
+            title: 'Sesión cerrada localmente',
+            text: 'No se pudo cerrar sesión en el servidor, pero tu sesión local ha sido finalizada.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#f59e0b',
+            backdrop: true,
+            allowOutsideClick: true,
+            allowEscapeKey: true,
+            heightAuto: false,
+            customClass: {
+              container: 'custom-swal-container'
+            },
+            didOpen: () => {
+              this.fixSwalContainer();
+            }
+          }).then(() => {
+            this.router.navigate(['/login']);
+          });
+        }
+      });
+    }
+  });
+}
+
+  //helper para la alerta
+  private fixSwalContainer() {
+  const container = document.querySelector('.swal2-container');
+  if (container) {
+    (container as HTMLElement).style.height = '100vh';
+    (container as HTMLElement).style.width = '100vw';
   }
+}
+
 }
