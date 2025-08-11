@@ -158,4 +158,5 @@ export class ProductDetailPage implements OnInit {
     // TODO: Implementar confirmación y eliminación
     // Swal.fire para confirmar eliminación
   }
+
 }
