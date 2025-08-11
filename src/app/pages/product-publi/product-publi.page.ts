@@ -1,13 +1,11 @@
-// src/app/pages/product-publi/product-publi.page.ts
-
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastController, AlertController, LoadingController  } from '@ionic/angular';
+import Swal from 'sweetalert2';
 import { ProductService } from 'src/app/services/product.service';
 
 @Component({
-    standalone: false,
+  standalone: false,
   selector: 'app-product-publi',
   templateUrl: './product-publi.page.html',
   styleUrls: ['./product-publi.page.scss'],
@@ -20,9 +18,6 @@ export class ProductPubliPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private loadingController: LoadingController,
     private productService: ProductService
   ) {}
 
@@ -39,20 +34,18 @@ export class ProductPubliPage implements OnInit {
     const files: FileList = event.target.files;
 
     if (this.selectedFiles.length + files.length > 10) {
-      this.presentAlert('Solo puedes subir hasta 10 imágenes.');
+      this.mostrarAlerta('Solo puedes subir hasta 10 imágenes.', 'warning');
       return;
     }
 
     Array.from(files).forEach((file: File) => {
       if (!file.type.startsWith('image/')) {
-        this.presentAlert('Solo se permiten archivos de imagen (jpg/png).');
+        this.mostrarAlerta('Solo se permiten archivos de imagen (jpg/png).', 'warning');
         return;
       }
 
-      // Agregar archivo a la lista
       this.selectedFiles.push(file);
 
-      // Crear preview
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreviews.push(reader.result as string);
@@ -68,39 +61,45 @@ export class ProductPubliPage implements OnInit {
 
   async onSubmit() {
     if (this.productForm.invalid) {
-      this.presentAlert('Por favor completa todos los campos requeridos.');
+      this.mostrarAlerta('Por favor completa todos los campos requeridos.', 'warning');
       return;
     }
 
     if (this.selectedFiles.length === 0) {
-      this.presentAlert('Debes agregar al menos una imagen.');
+      this.mostrarAlerta('Debes agregar al menos una imagen.', 'warning');
       return;
     }
 
-    const loading = await this.loadingController.create({
-      message: 'Publicando producto...',
-      duration: 0
+    Swal.fire({
+      title: 'Publicando producto...',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      heightAuto: false,
+      backdrop: true,
+      customClass: {
+        container: 'custom-swal-container'
+      },
+      didOpen: () => {
+        Swal.showLoading();
+        this.fixSwalContainer();
+      }
     });
-    await loading.present();
 
     try {
       const productData = this.productForm.value;
-
       await this.productService.createProduct(productData, this.selectedFiles).toPromise();
 
-      await loading.dismiss();
+      Swal.close();
 
-      // Limpiar el formulario
       this.resetForm();
 
-      this.presentToast('¡Producto publicado exitosamente!');
-      // Redireccionar a tab1 con un pequeño delay para que se vea el toast
+      await this.mostrarAlerta('¡Producto publicado exitosamente!', 'success');
+
       setTimeout(() => {
         this.router.navigate(['/tab1'], { replaceUrl: true });
-      }, 500)
-
+      }, 500);
     } catch (error: any) {
-      await loading.dismiss();
+      Swal.close();
       console.error('Error al crear producto:', error);
 
       let errorMessage = 'Error al publicar el producto. Intenta de nuevo.';
@@ -111,7 +110,7 @@ export class ProductPubliPage implements OnInit {
         errorMessage = 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.';
       }
 
-      this.presentAlert(errorMessage);
+      this.mostrarAlerta(errorMessage, 'error');
     }
   }
 
@@ -120,29 +119,35 @@ export class ProductPubliPage implements OnInit {
     this.selectedFiles = [];
     this.imagePreviews = [];
 
-    // Limpiar el input de archivos
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
     }
   }
 
-  async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color: 'success',
-      position: 'bottom'
+  private async mostrarAlerta(message: string, icon: 'success' | 'warning' | 'error') {
+    return Swal.fire({
+      icon,
+      title: message,
+      confirmButtonColor: icon === 'success' ? '#38bdf8' : icon === 'warning' ? '#f59e0b' : '#ef4444',
+      backdrop: true,
+      allowOutsideClick: true,
+      allowEscapeKey: true,
+      heightAuto: false,
+      customClass: {
+        container: 'custom-swal-container'
+      },
+      didOpen: () => {
+        this.fixSwalContainer();
+      }
     });
-    toast.present();
   }
 
-  async presentAlert(message: string) {
-    const alert = await this.alertController.create({
-      header: 'Atención',
-      message,
-      buttons: ['OK']
-    });
-    await alert.present();
+  private fixSwalContainer() {
+    const container = document.querySelector('.swal2-container');
+    if (container) {
+      (container as HTMLElement).style.height = '100vh';
+      (container as HTMLElement).style.width = '100vw';
+    }
   }
 }
