@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Share } from '@capacitor/share';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+
 import { ChatService } from 'src/app/services/chat.service';
 import { ProductService } from 'src/app/services/product.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -14,17 +16,13 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class ProductDetailPage implements OnInit {
 
-  slideOpts = {
-    initialSlide: 0,
-    speed: 400,
-    loop: true
-  };
+  slideOpts = { initialSlide: 0, speed: 400, loop: true };
 
   product: any;
   isLiked = false;
   likesCount = 0;
-  isMyProduct = false; // Nueva propiedad para determinar si es mi producto
-  currentUserId: number | null = null; // ID del usuario actual
+  isMyProduct = false;
+  currentUserId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -32,8 +30,11 @@ export class ProductDetailPage implements OnInit {
     private router: Router,
     private chat_service: ChatService,
     private product_service: ProductService,
-    private authService: AuthService // Agregamos AuthService
-  ) { }
+    private authService: AuthService,
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController
+  ) {}
 
   ngOnInit() {
     this.loadCurrentUser();
@@ -41,81 +42,59 @@ export class ProductDetailPage implements OnInit {
   }
 
   private loadCurrentUser() {
-    // Obtener información del usuario actual
     this.authService.getProfile().subscribe({
       next: (res) => {
-        this.currentUserId = res.user?.id;
-        this.checkIfMyProduct(); // Verificar propiedad después de cargar usuario
+        this.currentUserId = res.user?.id ?? null;
+        this.checkIfMyProduct();
       },
-      error: (err) => {
-        console.error('Error al cargar perfil del usuario:', err);
-      }
+      error: (err) => console.error('Error al cargar perfil del usuario:', err)
     });
   }
-private loadProductDetail() {
-  const productId = this.route.snapshot.paramMap.get('id')!;
-  this.product_service.getProductById(+productId).subscribe({
-    next: (response) => {
-      console.log('Respuesta completa:', response);
 
-      // El producto está directamente en response.data, no en response.data.product
-      this.product = response.data; // ← Cambio aquí
+  private loadProductDetail() {
+    const productId = Number(this.route.snapshot.paramMap.get('id')!);
+    this.product_service.getProductById(productId).subscribe({
+      next: (response) => {
+        this.product = response.data;
 
-      // Buscar estas propiedades en el nivel correcto
-      this.isLiked = response.data.is_liked_by_user || false;
-      this.likesCount = response.data.total_likes || 0;
+        this.isLiked    = this.product?.is_liked_by_user || false;
+        this.likesCount = this.product?.total_likes || 0;
 
-      // Procesar imágenes de forma segura
-      if (this.product.images && Array.isArray(this.product.images)) {
-        this.product.images = this.product.images.map((img: any) => ({
-          ...img,
-          image_url: `http://localhost:8000/storage/${img.image_path}`
-        }));
-      } else {
-        this.product.images = [];
-      }
+        this.product.images = Array.isArray(this.product.images)
+          ? this.product.images.map((img: any) => ({
+              ...img,
+              image_url: `http://localhost:8000/storage/${img.image_path}`
+            }))
+          : [];
 
-      this.checkIfMyProduct();
-      console.log('Producto cargado:', this.product);
-    },
-    error: (err) => {
-      console.error('Error al cargar detalle del producto:', err);
-    }
-  });
-}
+        this.checkIfMyProduct();
+      },
+      error: (err) => console.error('Error al cargar detalle del producto:', err)
+    });
+  }
 
   private checkIfMyProduct() {
-    // Verificar si el producto pertenece al usuario actual
     if (this.currentUserId && this.product?.user?.id) {
       this.isMyProduct = this.currentUserId === this.product.user.id;
     }
   }
 
   chat() {
-    if (!this.product?.user?.id) {
-      console.error('No se encontró el usuario del producto');
-      return;
-    }
+    if (!this.product?.user?.id) return;
     this.chat_service.startChat(this.product.user.id).subscribe({
       next: (res: any) => {
-        // Navegar a la página del chat enviando chatId y nombre
         this.router.navigate(['/tabs/tab3/chat-detail'], {
-          queryParams: {
-            chatId: res.chat_id,
-            name: this.product.user.name
-          }
+          queryParams: { chatId: res.chat_id, name: this.product.user.name }
         });
       },
-      error: (err) => {
-        console.error('Error al iniciar chat:', err);
-      }
+      error: (err) => console.error('Error al iniciar chat:', err)
     });
   }
 
   async shareProduct() {
     await Share.share({
-      title: this.product.name,
-      text: `Mira este producto: ${this.product.name} - ${this.product.description}`,
+      title: this.product?.name,
+      text: `Mira este producto: ${this.product?.name} - ${this.product?.description}`,
       url: window.location.href,
       dialogTitle: 'Compartir producto'
     });
@@ -125,25 +104,21 @@ private loadProductDetail() {
     if (!this.product?.id) return;
 
     if (this.isLiked) {
-      // Quitar like
       this.product_service.unlikeProduct(this.product.id).subscribe({
         next: (res) => {
           this.isLiked = false;
-          this.likesCount = res.product?.total_likes ?? (this.likesCount > 0 ? this.likesCount - 1 : 0);
+          this.likesCount = res.product?.total_likes ?? Math.max(0, this.likesCount - 1);
         },
         error: (err) => console.error('Error al quitar like:', err)
       });
     } else {
-      // Dar like
       this.product_service.likeProduct(this.product.id).subscribe({
         next: (res) => {
           this.isLiked = true;
-          this.likesCount = res.product?.total_likes ?? this.likesCount + 1;
+          this.likesCount = res.product?.total_likes ?? (this.likesCount + 1);
         },
         error: (err) => {
-          // Si ya diste like (error 400), solo actualizamos estado sin lanzar error
           if (err.status === 400 && err.error?.message?.includes('Ya has dado like')) {
-            console.warn('Ya habías dado like, ajustando estado local.');
             this.isLiked = true;
           } else {
             console.error('Error al dar like:', err);
@@ -153,18 +128,48 @@ private loadProductDetail() {
     }
   }
 
-  // Método para editar producto (placeholder)
+  // === EDITAR ===
   editProduct() {
-    console.log('Editando producto:', this.product.id);
-    // TODO: Implementar navegación a página de edición
-    // this.router.navigate(['/product-edit', this.product.id]);
+    this.router.navigate(['/product-publi'], {
+      state: { mode: 'edit', product: this.product }
+    });
   }
 
-  // Método para eliminar producto (placeholder)
-  deleteProduct() {
-    console.log('Eliminando producto:', this.product.id);
-    // TODO: Implementar confirmación y eliminación
-    // Swal.fire para confirmar eliminación
+  // === ELIMINAR ===
+  async deleteProduct() {
+    const alert = await this.alertCtrl.create({
+      header: 'Eliminar producto',
+      message: 'Esta acción no se puede deshacer. ¿Deseas continuar?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            const loading = await this.loadingCtrl.create({ message: 'Eliminando...' });
+            await loading.present();
+
+            this.product_service.deleteProduct(this.product.id).subscribe({
+              next: async () => {
+                await loading.dismiss();
+                await this.toast('Producto eliminado', 'success');
+                this.router.navigate(['/tabs/tab2']);
+              },
+              error: async (err) => {
+                await loading.dismiss();
+                console.error('Error al eliminar:', err);
+                await this.toast('No se pudo eliminar el producto', 'danger');
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
+  private async toast(message: string, color: string = 'primary') {
+    const t = await this.toastCtrl.create({ message, color, duration: 1800, position: 'bottom' });
+    await t.present();
+  }
 }

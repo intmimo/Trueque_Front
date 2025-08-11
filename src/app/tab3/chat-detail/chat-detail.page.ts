@@ -50,7 +50,7 @@ export class ChatDetailPage implements OnInit, OnDestroy {
         return;
       }
 
-      // Si cambias de chat, sal del anterior
+      // Sal del canal anterior si cambió
       if (this.chatId && this.chatId !== nextChatId) {
         this.chatService.leaveChat(this.chatId);
       }
@@ -61,8 +61,7 @@ export class ChatDetailPage implements OnInit, OnDestroy {
 
       // Escuchar en tiempo real
       this.chatService.listenToChat(this.chatId, (e: any) => {
-
-        // ✅ Evento de "mensajes leídos" (palomitas)
+        // Evento de lectura
         if (e.__type === 'read' && Array.isArray(e.message_ids)) {
           if (e.reader_id !== this.userId) {
             this.messages = this.messages.map(m =>
@@ -75,31 +74,29 @@ export class ChatDetailPage implements OnInit, OnDestroy {
           return;
         }
 
-        const time = this.formatTime(e.created_at);
-        const senderId = this.senderIdFrom(e); // 👈 FIX aquí
+        const senderId = this.senderIdFrom(e);
 
-        // ⛔️ Evitar duplicado: si el mensaje es mío, no lo agrego (ya se hizo push optimista)
+        // Evitar duplicar mi propio mensaje (ya hicimos push optimista)
         if (senderId === this.userId) {
           this.scrollToBottomSoon();
           return;
         }
 
         this.messages.push({
-          id: e.id,                           // 👈 para poder marcar leído
+          id: e.id,
           text: e.content,
           sentByUser: senderId === this.userId,
-          time,
+          time: this.formatTime(e.created_at),
           imageUrl: e.image_path || null,
-          readAt: e.read_at || null           // 👈 estado de lectura
+          readAt: e.read_at || null
         });
         this.scrollToBottomSoon();
       });
     });
   }
 
-  // ---------- util para detectar el emisor, venga como venga ----------
+  // Detectar emisor venga como venga
   private senderIdFrom(msgOrEvent: any): number {
-    // Historial suele venir como user_id; tiempo real como user.id
     const raw =
       msgOrEvent?.user_id ??
       msgOrEvent?.user?.id ??
@@ -108,13 +105,12 @@ export class ChatDetailPage implements OnInit, OnDestroy {
     return Number(raw);
   }
 
-  // Auto-scroll al entrar (por si ya había historial)
+  // Autoscroll al entrar y marcar leídos
   ionViewDidEnter() {
     this.scrollToBottomSoon();
-    if (this.chatId) this.chatService.markRead(this.chatId).subscribe(); // ✅ marca leídos al entrar
+    if (this.chatId) this.chatService.markRead(this.chatId).subscribe();
   }
 
-  // Al salir de la vista, cierra canal
   ionViewWillLeave() {
     if (this.chatId) this.chatService.leaveChat(this.chatId);
   }
@@ -125,10 +121,12 @@ export class ChatDetailPage implements OnInit, OnDestroy {
   }
 
   // -------- Helpers ----------
-  private scrollToBottomSoon() {
-    setTimeout(() => this.content?.scrollToBottom(250), 0);
+  scrollToBottomSoon(): void {
+    const delays = [0, 80, 160, 280, 400];
+    delays.forEach(d =>
+      setTimeout(() => this.content?.scrollToBottom(250), d)
+    );
   }
-
   onImageLoaded() {
     this.scrollToBottomSoon();
   }
@@ -145,26 +143,26 @@ export class ChatDetailPage implements OnInit, OnDestroy {
   loadMessages() {
     this.chatService.getMessages(this.chatId).subscribe({
       next: (res) => {
-        this.messages = res.data.map((msg: any) => {
-          const senderId = this.senderIdFrom(msg); // 👈 FIX aquí
+        this.messages = (res.data || []).map((msg: any) => {
+          const senderId = this.senderIdFrom(msg);
           return {
-            id: msg.id,                              // 👈
+            id: msg.id,
             text: msg.content,
             sentByUser: senderId === this.userId,
             time: this.formatTime(msg.created_at),
             imageUrl: msg.image_path,
-            readAt: msg.read_at || null              // 👈
+            readAt: msg.read_at || null
           };
         });
         this.scrollToBottomSoon();
-        this.chatService.markRead(this.chatId).subscribe(); // ✅ marca leídos al cargar
+        this.chatService.markRead(this.chatId).subscribe();
       },
       error: (err) => console.error('❌ Error al cargar mensajes:', err)
     });
   }
 
   onImageSelected(event: any) {
-    const file = event.target.files?.[0];
+    const file = event.target?.files?.[0];
     if (file) this.selectedImage = file;
   }
 
@@ -174,17 +172,15 @@ export class ChatDetailPage implements OnInit, OnDestroy {
 
     this.chatService.sendMessage(this.chatId, content, this.selectedImage).subscribe({
       next: (res) => {
-        // Optimista (el back usa toOthers, así no duplica)
+        // Push optimista
         const now = new Date();
-        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
         this.messages.push({
-          id: res.id,                       // 👈 para luego marcar leído
+          id: res.id,
           text: res.content,
           sentByUser: true,
-          time,
+          time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           imageUrl: res.image_path,
-          readAt: res.read_at || null       // 👈 por si el back ya lo trae
+          readAt: res.read_at || null
         });
 
         this.newMessage = '';
@@ -195,10 +191,10 @@ export class ChatDetailPage implements OnInit, OnDestroy {
     });
   }
 
-  // ---------- Borrar mensaje (mínimo cambio) ----------
+  // ---------- Borrar mensaje ----------
   confirmDeleteMessage(msg: any) {
-    if (!msg?.id || !msg.sentByUser) return; // solo puedes borrar lo tuyo
-  
+    if (!msg?.id || !msg.sentByUser) return;
+
     Swal.fire({
       title: '¿Deseas eliminar el mensaje?',
       icon: 'warning',
@@ -209,39 +205,21 @@ export class ChatDetailPage implements OnInit, OnDestroy {
       heightAuto: false
     }).then(result => {
       if (!result.isConfirmed) return;
-  
+
       this.chatService.deleteMessage(msg.id).subscribe({
         next: () => {
-          // No lo quitamos: lo marcamos como eliminado
           const i = this.messages.findIndex(m => m.id === msg.id);
           if (i >= 0) {
-            this.messages[i] = {
-              ...this.messages[i],
-              text: null,
-              imageUrl: null,
-              deleted: true
-            };
+            this.messages[i] = { ...this.messages[i], text: null, imageUrl: null, deleted: true };
           }
-  
-          Swal.fire({
-            icon: 'success',
-            title: 'Mensaje eliminado',
-            timer: 1200,
-            showConfirmButton: false,
-            heightAuto: false
-          });
+          Swal.fire({ icon: 'success', title: 'Mensaje eliminado', timer: 1200, showConfirmButton: false, heightAuto: false });
           this.scrollToBottomSoon();
         },
         error: (err) => {
           console.error('❌ No se pudo eliminar mensaje:', err);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo eliminar el mensaje.',
-            heightAuto: false
-          });
+          Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar el mensaje.', heightAuto: false });
         }
       });
     });
   }
-}  
+}

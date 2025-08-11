@@ -22,55 +22,58 @@ export class ProductPage implements OnInit {
     private authService: AuthService
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadProducts();
   }
 
-  loadProducts() {
+  loadProducts(): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const userId = user.id;
 
-    this.productService.getAllProducts(userId).subscribe(products => {
-      this.products = products;
-      this.filteredProducts = products; // Inicializar productos filtrados
+    this.productService.getAllProducts(userId).subscribe({
+      next: (products) => {
+        this.products = products || [];
+        this.filteredProducts = this.products;
+      },
+      error: () => {
+        this.products = [];
+        this.filteredProducts = [];
+      }
     });
   }
 
-  // Manejo del cambio en la búsqueda
-  onSearchChange(event: any) {
-    const searchTerm = event.target.value?.toLowerCase() || '';
+  // Búsqueda
+  onSearchChange(event: any): void {
+    const searchTerm = event?.target?.value?.toLowerCase?.() || '';
     this.searchTerm = searchTerm;
     this.filterProducts();
   }
 
-  // Manejo del cambio en el filtro con chips
-  setFilter(filterType: string) {
+  // Filtros
+  setFilter(filterType: string): void {
     this.selectedFilter = filterType;
     this.filterProducts();
   }
 
-  // Filtrar productos basado en el término de búsqueda y filtro seleccionado
-  filterProducts() {
+  // Filtrar
+  filterProducts(): void {
     if (!this.searchTerm.trim()) {
       this.filteredProducts = [...this.products];
       return;
     }
 
     const searchLower = this.searchTerm.toLowerCase();
-    
+
     this.filteredProducts = this.products.filter(product => {
       switch (this.selectedFilter) {
         case 'location':
           return product.location?.toLowerCase().includes(searchLower);
         case 'name':
           return product.name?.toLowerCase().includes(searchLower);
-        
         case 'description':
           return product.description?.toLowerCase().includes(searchLower);
-        
         case 'user':
           return product.user?.name?.toLowerCase().includes(searchLower);
-        
         case 'all':
         default:
           return (
@@ -84,30 +87,63 @@ export class ProductPage implements OnInit {
     });
   }
 
-  // Resaltar término de búsqueda en el texto
+  // Resaltar término de búsqueda
   highlightSearchTerm(text: string): string {
-    if (!text || !this.searchTerm.trim()) {
-      return text || '';
-    }
-
+    if (!text || !this.searchTerm.trim()) return text || '';
     const searchTerm = this.searchTerm.trim();
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.replace(regex, '<mark>$1</mark>');
   }
 
   // Limpiar búsqueda
-  clearSearch() {
+  clearSearch(): void {
     this.searchTerm = '';
     this.selectedFilter = 'all';
     this.filteredProducts = [...this.products];
   }
 
-  // Métodos existentes
-  verDetalle(id: number) {
+  // Navegación
+  verDetalle(id: number): void {
     this.router.navigate(['/product-detail', id]);
   }
 
-  verPerfilPublico(userId: number) {
-    this.router.navigate(['/profile-public', userId]);
+  // ⬇️ Ahora pasamos el objeto user en el state
+  verPerfilPublico(user: any): void {
+    if (!user) return;
+    this.router.navigate(['/profile-public', user.id], {
+      state: { user }
+    });
+  }
+
+  // ---------- Avatar helpers ----------
+  getUserAvatarSrc(user: any): string {
+    if (!user) {
+      return 'https://ui-avatars.com/api/?name=User&background=9ca3af&color=fff&size=64';
+    }
+
+    if (user.profile_photo_url) {
+      const url: string = user.profile_photo_url;
+      return url.startsWith('/storage/')
+        ? `http://localhost:8000${url}`
+        : url;
+    }
+
+    if (user.profile_photo) {
+      return `http://localhost:8000/storage/${user.profile_photo}`;
+    }
+
+    if (user.avatar) {
+      return `http://localhost:8000/storage/${user.avatar}`;
+    }
+
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=9ca3af&color=fff&size=64`;
+  }
+
+  onUserAvatarError(event: Event, name?: string): void {
+    const img = event.target as HTMLImageElement;
+    const safeName = encodeURIComponent(name || 'User');
+    if (img && (!img.src || !img.src.includes('ui-avatars.com'))) {
+      img.src = `https://ui-avatars.com/api/?name=${safeName}&background=9ca3af&color=fff&size=64`;
+    }
   }
 }

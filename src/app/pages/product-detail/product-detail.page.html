@@ -2,7 +2,8 @@
   <ion-toolbar>
     <ion-title>Detalle del Producto</ion-title>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs"></ion-back-button>
+      <!-- Ajusta la ruta de retorno al tab de productos -->
+      <ion-back-button defaultHref="/tabs/tab2"></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -28,21 +29,23 @@
             <ion-icon [name]="isLiked ? 'heart' : 'heart-outline'" color="danger"></ion-icon>
             {{ likesCount }}
           </ion-button>
-          <span
-            [ngClass]="{'disponible': i.status === 'disponible', 'intercambiado': i.status === 'intercambiado'}">
+          <span [ngClass]="{ 'disponible': i.status === 'disponible', 'intercambiado': i.status === 'intercambiado' }">
             {{ i.status | titlecase }}
           </span>
         </ion-card-title>
-        <ion-card-subtitle>{{ i.created_at | date: 'dd MMM yyyy' }}</ion-card-subtitle>
+
+        <ion-card-subtitle>{{ i.created_at | date:'dd MMM yyyy' }}</ion-card-subtitle>
+
         <p>{{ i.description }}</p>
         <p><strong>Intercambio por:</strong> {{ i.wanted_item }}</p>
+
         <ion-label>
-          <h3><strong>Vendedor:</strong> {{ i.user.name }}</h3>
-          <p><strong>Ubicación:</strong> {{ i.user.municipio }}, {{ i.user.colonia }}</p>
+          <h3><strong>Vendedor:</strong> {{ i.user?.name }}</h3>
+          <p><strong>Ubicación:</strong> {{ i.user?.municipio || i.location }}, {{ i.user?.colonia }}</p>
         </ion-label>
       </ion-card-content>
 
-      <!-- Botones para productos de otros usuarios -->
+      <!-- Si NO es tu producto -->
       @if (!isMyProduct) {
         <ion-button expand="block" class="button" (click)="chat()">
           <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
@@ -50,19 +53,19 @@
         </ion-button>
       }
 
-      <!-- Botones para mis productos -->
+      <!-- Si SÍ es tu producto -->
       @if (isMyProduct) {
         <ion-button expand="block" color="warning" class="button" (click)="editProduct()">
           <ion-icon name="create-outline" slot="start"></ion-icon>
           Editar producto
         </ion-button>
+
         <ion-button expand="block" color="danger" class="button" (click)="deleteProduct()">
           <ion-icon name="trash-outline" slot="start"></ion-icon>
           Eliminar producto
         </ion-button>
       }
 
-      <!-- Botón compartir (siempre visible) -->
       <ion-button expand="block" class="button share-button" (click)="shareProduct()">
         <ion-icon name="share-social-outline" slot="start"></ion-icon>
         Compartir

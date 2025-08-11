@@ -15,12 +15,16 @@ interface UserPublic {
   days_in_app?: number;
   created_at?: string;
   updated_at?: string;
+  profile_photo_url?: string;
+  profile_photo?: string;
+  avatar?: string;
 }
 
 interface Product {
   id: number;
   name: string;
   description: string;
+  user?: UserPublic;
   images?: { image_path: string }[];
 }
 
@@ -31,14 +35,12 @@ interface Product {
   styleUrls: ['./profile-public.page.scss'],
 })
 export class ProfilePublicPage implements OnInit {
-
   userId!: number;
   user?: UserPublic;
   products: Product[] = [];
 
-  // Props para el sistema de calificación
   averageRating: number = 0;
-  totalRatings: number = 0;
+  totalRatings: number = 0; // tu back actual no lo devuelve; quedará en 0
   selectedStars: number = 0;
   isSubmitting: boolean = false;
 
@@ -48,36 +50,39 @@ export class ProfilePublicPage implements OnInit {
     private ratingService: RatingService,
     private toastCtrl: ToastController,
     private router: Router
-  ) { }
+  ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    const stateUser =
+      (this.router.getCurrentNavigation()?.extras?.state as any)?.user ||
+      (history.state && (history.state as any).user);
+
+    if (stateUser?.id) {
+      this.user = stateUser as UserPublic;
+      this.userId = this.user.id;
+      this.loadUserProducts();
+      this.loadRatingSummary();
+      return;
+    }
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
         this.userId = Number(id);
-        this.loadUser();
-        this.loadUserProducts();
+        this.loadUserProducts(true); // derivar user desde products[0].user
         this.loadRatingSummary();
       }
     });
   }
 
-  loadUser() {
-    this.profilePublicService.getUserById(this.userId).subscribe({
-      next: (res: any) => {
-        this.user = res.user || res.data || res;
-      },
-      error: (err: any) => {
-        console.error('Error al cargar usuario público:', err);
-        this.showToast('Error al cargar el perfil del usuario', 'danger');
-      }
-    });
-  }
-
-  loadUserProducts() {
+  loadUserProducts(deriveUserFromProducts: boolean = false): void {
     this.profilePublicService.getUserProducts(this.userId).subscribe({
       next: (res: any) => {
         this.products = res.data || res.products || [];
+        if (deriveUserFromProducts && !this.user) {
+          const firstUser = this.products?.[0]?.user;
+          if (firstUser?.id) this.user = firstUser;
+        }
       },
       error: (err: any) => {
         console.error('Error al cargar productos del usuario:', err);
@@ -86,64 +91,68 @@ export class ProfilePublicPage implements OnInit {
     });
   }
 
-  verDetalle(id: number) {
-    this.router.navigate(['/product-detail', id]);
+  loadRatingSummary(): void {
+    this.ratingService.getUserRatingSummary(this.userId).subscribe({
+      next: (res: any) => {
+        this.averageRating = res?.average_rating || 0;
+        this.totalRatings = res?.rating_count || 0; // tu endpoint no lo trae aún
+      },
+      error: (err: any) => {
+        console.error('Error al cargar rating:', err);
+      }
+    });
   }
 
-  onImageError(event: any) {
-    const img = event.target as HTMLImageElement;
-    if (img) {
-      img.src = 'assets/images/placeholder.png';
-    }
-  }
-
-  // === Métodos para rating ===
-loadRatingSummary() {
-  this.ratingService.getUserRatingSummary(this.userId).subscribe({
-    next: (res: any) => {
-      this.averageRating = res.average_rating || 0;
-      this.totalRatings = res.rating_count || 0;
-    },
-    error: (err: any) => {
-      console.error('Error al cargar rating:', err);
-      // No mostrar toast de error para el rating, es opcional
-    }
-  });
-}
-
-  setStars(value: number) {
+  setStars(value: number): void {
     this.selectedStars = value;
   }
 
-  submitRating() {
+  submitRating(): void {
     if (this.selectedStars < 1) {
       this.showToast('Selecciona al menos 1 estrella', 'warning');
       return;
     }
 
+    // Evitar 400 por auto-calificación
+    const me = JSON.parse(localStorage.getItem('user') || '{}');
+    if (me?.id === this.userId) {
+      this.showToast('No puedes calificarte a ti mismo', 'warning');
+      return;
+    }
+
     this.isSubmitting = true;
     this.ratingService.rateUser(this.userId, this.selectedStars).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.showToast('Calificación enviada exitosamente', 'success');
-        this.loadRatingSummary(); // Actualizar el promedio
-        this.selectedStars = 0;   // Resetear selección
+        this.loadRatingSummary();
+        this.selectedStars = 0;
         this.isSubmitting = false;
       },
       error: (err: any) => {
         console.error('Error al enviar calificación:', err);
 
-        // Manejar diferentes tipos de errores
-        if (err.status === 401) {
-          this.showToast('Debes iniciar sesión para calificar', 'warning');
-        } else if (err.status === 422) {
-          this.showToast('Ya has calificado a este usuario', 'warning');
-        } else {
-          this.showToast('Error al enviar calificación', 'danger');
-        }
+        const msg =
+          err?.error?.message ||
+          err?.error?.errors?.stars?.[0] ||
+          (err.status === 401
+            ? 'Debes iniciar sesión para calificar'
+            : 'Error al enviar calificación');
 
+        this.showToast(msg, err.status === 401 ? 'warning' : 'danger');
         this.isSubmitting = false;
       }
     });
+  }
+
+  verDetalle(id: number): void {
+    this.router.navigate(['/product-detail', id]);
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      img.src = 'https://via.placeholder.com/300x200?text=Sin+imagen';
+    }
   }
 
   private async showToast(message: string, color: string = 'primary') {

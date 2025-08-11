@@ -2,65 +2,49 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class RatingService {
   private apiUrl = 'http://localhost:8000/api';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  // Como tus endpoints son públicos, no es necesario enviar Authorization
-  private getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'Content-Type': 'application/json'
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token') || '';
+    // No seteamos Content-Type para FormData (el navegador pone el boundary)
+    let headers = new HttpHeaders({ Accept: 'application/json' });
+    if (token) headers = headers.set('Authorization', `Bearer ${token}`);
+    return headers;
+  }
+
+  // POST /rate/{userId} con campo 'stars'
+  rateUser(toUserId: number, stars: number, comment?: string): Observable<any> {
+    const value = Math.max(1, Math.min(5, Number(stars) || 0));
+    const fd = new FormData();
+    fd.append('stars', String(value));
+    if (comment) fd.append('comment', comment); // el back actual lo ignora; no estorba
+    return this.http.post(`${this.apiUrl}/rate/${toUserId}`, fd, {
+      headers: this.getAuthHeaders(),
     });
   }
 
-  rateUser(toUserId: number, stars: number, comment?: string): Observable<any> {
-  const body: any = { stars };
-  if (comment) {
-    body.comment = comment;
-  }
-  return this.http.post(
-    `${this.apiUrl}/rate/${toUserId}`,
-    body,
-    { headers: this.getAuthHeaders() }
-  );
-}
-
-private getAuthHeaders(): HttpHeaders {
-  const token = localStorage.getItem('token');
-  let headers = new HttpHeaders({
-    'Content-Type': 'application/json'
-  });
-  if (token) {
-    headers = headers.set('Authorization', `Bearer ${token}`);
-  }
-  return headers;
-}
-
-
-
+  // GET /rating/{userId}
   getUserRatingSummary(toUserId: number): Observable<any> {
-  return this.http.get(
-    `${this.apiUrl}/rating/${toUserId}`,
-    { headers: this.getAuthHeaders() }  // <-- Cambiado para enviar token
-  );
-}
+    return this.http.get(`${this.apiUrl}/rating/${toUserId}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
 
+  // Alias (mismo endpoint por ahora)
   getUserRatings(toUserId: number): Observable<any> {
-  return this.http.get(
-    `${this.apiUrl}/rating/${toUserId}`,
-    { headers: this.getAuthHeaders() }
-  );
-}
+    return this.http.get(`${this.apiUrl}/rating/${toUserId}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
 
-getUserRatingHistory(toUserId: number): Observable<any> {
-  return this.http.get(
-    `${this.apiUrl}/rating/history/${toUserId}`,
-    { headers: this.getAuthHeaders() }
-  );
-}
-
+  // ⚠️ Este endpoint no existe en tu back actual; dejar aquí por si luego lo agregas
+  getUserRatingHistory(toUserId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/rating/history/${toUserId}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
 }
