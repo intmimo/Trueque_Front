@@ -96,7 +96,7 @@ export class ProductPubliPage implements OnInit {
       await this.mostrarAlerta('¡Producto publicado exitosamente!', 'success');
 
       setTimeout(() => {
-        this.router.navigate(['/tab1'], { replaceUrl: true });
+        this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
       }, 500);
     } catch (error: any) {
       Swal.close();
