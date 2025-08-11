@@ -52,29 +52,37 @@ export class ProductDetailPage implements OnInit {
       }
     });
   }
+private loadProductDetail() {
+  const productId = this.route.snapshot.paramMap.get('id')!;
+  this.product_service.getProductById(+productId).subscribe({
+    next: (response) => {
+      console.log('Respuesta completa:', response);
 
-  private loadProductDetail() {
-    const productId = this.route.snapshot.paramMap.get('id')!;
-    this.product_service.getProductById(+productId).subscribe({
-      next: (response) => {
-        const data = response.data;
-        this.product = data.product;
-        this.isLiked = data.is_liked_by_user || false;
-        this.likesCount = data.total_likes || 0;
+      // El producto está directamente en response.data, no en response.data.product
+      this.product = response.data; // ← Cambio aquí
 
+      // Buscar estas propiedades en el nivel correcto
+      this.isLiked = response.data.is_liked_by_user || false;
+      this.likesCount = response.data.total_likes || 0;
+
+      // Procesar imágenes de forma segura
+      if (this.product.images && Array.isArray(this.product.images)) {
         this.product.images = this.product.images.map((img: any) => ({
           ...img,
           image_url: `http://localhost:8000/storage/${img.image_path}`
         }));
-
-        this.checkIfMyProduct(); // Verificar propiedad después de cargar producto
-        console.log(response);
-      },
-      error: (err) => {
-        console.error('Error al cargar detalle del producto:', err);
+      } else {
+        this.product.images = [];
       }
-    });
-  }
+
+      this.checkIfMyProduct();
+      console.log('Producto cargado:', this.product);
+    },
+    error: (err) => {
+      console.error('Error al cargar detalle del producto:', err);
+    }
+  });
+}
 
   private checkIfMyProduct() {
     // Verificar si el producto pertenece al usuario actual
