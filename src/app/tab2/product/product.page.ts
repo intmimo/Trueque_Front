@@ -10,6 +10,8 @@ import { ProductService } from 'src/app/services/product.service';
   styleUrls: ['./product.page.scss'],
 })
 export class ProductPage implements OnInit {
+  // Agregar la URL base para imágenes
+  imageBaseUrl = 'http://localhost:8000/storage/';
 
   products: any[] = [];
   filteredProducts: any[] = [];
@@ -35,6 +37,48 @@ export class ProductPage implements OnInit {
       this.filteredProducts = products; // Inicializar productos filtrados
     });
   }
+
+  // ⭐ Función para obtener URL de foto de perfil del usuario que publica
+  getUserPhotoUrl(user: any): string {
+    // DEBUG: Imprimir qué propiedades tiene el usuario
+    console.log('🔍 DEBUG - Usuario completo:', user);
+    console.log('🔍 DEBUG - Propiedades del usuario:', Object.keys(user || {}));
+    
+    // Prioridad 1: Si el backend ya devuelve la URL completa
+    if (user?.profile_photo_url) {
+      let photoUrl = user.profile_photo_url;
+      console.log('✅ Usando profile_photo_url:', photoUrl);
+      // Si la URL es relativa (/storage/...), agregar el dominio
+      if (photoUrl.startsWith('/storage/')) {
+        photoUrl = 'http://localhost:8000' + photoUrl;
+      }
+      return photoUrl;
+    }
+
+    // Prioridad 2: Si tiene el path relativo en profile_photo
+    if (user?.profile_photo) {
+      console.log('✅ Usando profile_photo:', user.profile_photo);
+      return this.imageBaseUrl + user.profile_photo;
+    }
+
+    // Prioridad 3: Si tiene avatar (como en tu HTML actual)
+    if (user?.avatar) {
+      console.log('✅ Usando avatar:', user.avatar);
+      return this.imageBaseUrl + user.avatar;
+    }
+
+    // Fallback: avatar generado con UI Avatars
+    console.log('⭐ Usando avatar generado para:', user?.name);
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=9ca3af&color=fff&size=64`;
+  }
+
+  // ⭐ Función para manejar errores de imagen
+  onImageError(event: any, user: any) {
+    // Si falla cargar la imagen, usar avatar generado
+    const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=9ca3af&color=fff&size=64`;
+    event.target.src = fallbackUrl;
+  }
+
 
   // Manejo del cambio en la búsqueda
   onSearchChange(event: any) {

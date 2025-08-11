@@ -70,12 +70,17 @@
         <h2 [innerHTML]="highlightSearchTerm(product.name)"></h2>
         <p [innerHTML]="highlightSearchTerm(product.description)"></p>
         <!-- Usuario que publicó -->
-        <div class="user-info" (click)="verPerfilPublico(product.user.id); $event.stopPropagation()"
-          style="display: flex; align-items: center; cursor: pointer; margin-top: 6px;">
+        <div class="user-info" 
+            (click)="verPerfilPublico(product.user.id); $event.stopPropagation()"
+            style="display: flex; align-items: center; cursor: pointer; margin-top: 6px;">
+          
+          <!-- ⭐ Imagen de perfil actualizada -->
           <img
-            [src]="product.user && product.user.avatar ? ('http://localhost:8000/storage/' + product.user.avatar) : 'assets/images/avatar-placeholder.png'"
-            alt="Avatar"
-            style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px;">
+            [src]="getUserPhotoUrl(product.user)"
+            [alt]="product.user?.name || 'Usuario'"
+            (error)="onImageError($event, product.user)"
+            style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px; object-fit: cover;">
+          
           <span [innerHTML]="highlightSearchTerm(product.user.name)"></span>
         </div>
       </ion-label>
