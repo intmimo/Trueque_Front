@@ -17,9 +17,7 @@ export class Tab1Page implements OnInit {
 
   user: any;
   products: any[] = [];
-  likes: any[] = [];           // si lo usas
-  likesRecibidos: any[] = [];  // si lo usas
-  showLikes: boolean = false;
+  likedProducts: any[] = [];
 
   // ⭐ Rating
   ratingAvg = 0;
@@ -58,6 +56,8 @@ export class Tab1Page implements OnInit {
           this.getUserProducts(this.user.id);
           this.cargarMisProductos();
           this.loadRatings(this.user.id);
+          this.loadRatingHistory(this.user.id);
+          this.loadLikedProducts(this.user.id);
         }
       },
       error: (err) => console.error('Error al cargar perfil:', err)
@@ -267,5 +267,32 @@ export class Tab1Page implements OnInit {
       (container as HTMLElement).style.height = '100vh';
       (container as HTMLElement).style.width = '100vw';
     }
+  }
+
+  // ⭐ Cargar historial completo de calificaciones
+loadRatingHistory(userId: number) {
+  this.ratingService.getUserRatingHistory(userId).subscribe({
+    next: (res) => {
+      console.log('Historial de ratings:', res);
+      this.ratings = res.ratings;  // Aquí sí hay lista de calificaciones
+    },
+    error: (err) => console.error('Error al cargar historial de ratings:', err)
+  });
+}
+
+loadLikedProducts(userId: number) {
+  this.http.get<any>(`${this.API_URL}/user/${userId}/liked-products`, { headers: this.getAuthHeaders() })
+    .subscribe({
+      next: (res) => {
+        this.likedProducts = res.data || [];
+        console.log('Productos liked:', this.likedProducts);
+      },
+      error: (err) => console.error('Error al obtener productos liked:', err)
+    });
+}
+
+  // Navegar al detalle del producto
+  goToProductDetail(productId: number) {
+    this.router.navigate(['/product-detail', productId]);
   }
 }

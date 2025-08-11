@@ -32,19 +32,19 @@ export class ProductService {
   // Método específico para búsqueda con parámetros
   searchProducts(searchTerm?: string, location?: string, sortBy?: string, excludeUserId?: number): Observable<any> {
     let params = new HttpParams();
-    
+
     if (searchTerm && searchTerm.trim()) {
       params = params.set('search', searchTerm.trim());
     }
-    
+
     if (location && location.trim()) {
       params = params.set('location', location.trim());
     }
-    
+
     if (sortBy) {
       params = params.set('sort', sortBy);
     }
-    
+
     if (excludeUserId) {
       params = params.set('exclude_user', excludeUserId.toString());
     }
@@ -64,7 +64,7 @@ export class ProductService {
     excludeUserId?: number;
   }): Observable<any> {
     let params = new HttpParams();
-    
+
     Object.keys(filters).forEach(key => {
       const value = (filters as any)[key];
       if (value && value.toString().trim()) {
@@ -146,4 +146,5 @@ unlikeProduct(id: number) {
       map(response => response.data || [])
     );
   }
+
 }

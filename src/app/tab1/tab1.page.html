@@ -17,10 +17,7 @@
   <!-- Tarjeta de cabecera: avatar + nombre + ubicación + rating -->
   <div class="profile-header">
     <div class="avatar">
-      <img
-        [src]="getProfilePhotoUrl()"
-        [alt]="user?.name || 'Usuario'"
-        (error)="onImageError($event)">
+      <img [src]="getProfilePhotoUrl()" [alt]="user?.name || 'Usuario'" (error)="onImageError($event)">
     </div>
     <div class="info">
       <h2>{{ user?.name || 'Usuario' }}</h2>
@@ -49,43 +46,50 @@
     </ion-fab-button>
   </ion-fab>
 
-  <!-- Productos publicados -->
-  <ion-list>
-    <ion-list-header>
-      <ion-label>Mis productos</ion-label>
-    </ion-list-header>
-  </ion-list>
 
-  <div class="products-grid">
-    @for (p of products; track p.id) {
-    <div class="product-card">
-      <div class="thumb">
-        <img
-          [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
-          alt="{{ p.name }}" />
-      </div>
-      <div class="details">
-        <h4>{{ p.name }}</h4>
-        <div class="info-row">
-          <span class="likes" [attr.aria-label]="'Cantidad de likes: ' + p.likes_count">
-            <ion-icon name="heart"></ion-icon> {{ p.likes_count }}
-          </span>
-          <span class="status" [class.disponible]="p.status === 'disponible'"
-            [class.intercambiado]="p.status === 'intercambiado'">
-            {{ p.status | titlecase }}
-          </span>
+  <!-- Productos publicados -->
+<ion-accordion-group>
+  <ion-accordion value="productos">
+    <ion-item slot="header" color="light">
+      <ion-label>Mis productos</ion-label>
+    </ion-item>
+
+    <div slot="content">
+      <div class="products-grid">
+        @for (p of products; track p.id) {
+        <div class="product-card" (click)="goToProductDetail(p.id)">
+          <div class="thumb">
+            <img
+              [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
+              alt="{{ p.name }}" />
+          </div>
+          <div class="details">
+            <h4>{{ p.name }}</h4>
+            <div class="info-row">
+              <span class="likes" [attr.aria-label]="'Cantidad de likes: ' + p.likes_count">
+                <ion-icon name="heart"></ion-icon> {{ p.likes_count }}
+              </span>
+              <span class="status" [class.disponible]="p.status === 'disponible'"
+                [class.intercambiado]="p.status === 'intercambiado'">
+                {{ p.status | titlecase }}
+              </span>
+            </div>
+          </div>
         </div>
+        }
+
+        @if (!products.length) {
+        <div class="empty">
+          <ion-icon name="cube-outline"></ion-icon>
+          <p>Aún no has publicado productos</p>
+        </div>
+        }
       </div>
     </div>
-    }
-  </div>
+  </ion-accordion>
+</ion-accordion-group>
 
-  @if (!products.length) {
-  <div class="empty">
-    <ion-icon name="cube-outline"></ion-icon>
-    <p>Aún no has publicado productos</p>
-  </div>
-  }
+
 
 
 
@@ -95,29 +99,30 @@
       <ion-item slot="header" color="light">
         <ion-label>Historial de calificaciones recibidas</ion-label>
       </ion-item>
+
       <div class="ratings-list" slot="content">
         @for (r of ratings; track r.id) {
-          <div class="rating-item">
-            <div class="rater">
-              <img
-                [src]="'https://ui-avatars.com/api/?name=' + (r.rater?.name || 'User') + '&background=9ca3af&color=fff&size=64'"
-                alt="rater">
-              <div>
-                <h5>{{ r.rater?.name || 'Usuario' }}</h5>
-                <small>{{ r.created_at | date:'medium' }}</small>
-              </div>
+        <div class="rating-item">
+          <div class="rater">
+            <img
+              [src]="'https://ui-avatars.com/api/?name=' + (r.from_user?.name || 'Usuario') + '&background=9ca3af&color=fff&size=64'"
+              alt="rater">
+            <div>
+              <small>{{ r.from_user.name || 'Usuario' }}</small>
+              <br>
+              <small>{{ r.created_at | date:'medium' }}</small>
             </div>
-            <div class="stars">
-              @for (s of starsWithIndex; track s.index) {
-                <span [class.filled]="(s.index + 1) <= r.value">★</span>
-              }
-              <small class="value">{{ r.value }}/5</small>
-            </div>
-            @if (r.comment) {
-              <p class="comment">{{ r.comment }}</p>
-            }
           </div>
+
+          <div class="stars">
+            @for (s of starsWithIndex; track s.index) {
+            <span [class.filled]="(s.index + 1) <= r.stars">★</span>
+            }
+            <small class="value">{{ r.stars }}/5</small>
+          </div>
+        </div>
         }
+
         @if (!ratings.length) {
         <div class="empty">
           <ion-icon name="star-outline"></ion-icon>
@@ -127,6 +132,49 @@
       </div>
     </ion-accordion>
   </ion-accordion-group>
+
+  <!-- Productos que te gustaron -->
+<ion-accordion-group>
+  <ion-accordion value="liked-products">
+    <ion-item slot="header" color="light">
+      <ion-label>Mis me gusta</ion-label>
+    </ion-item>
+
+    <div slot="content">
+      <div class="products-grid">
+        @for (p of likedProducts; track p.id) {
+        <div class="product-card">
+          <div class="thumb">
+            <img
+              [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
+              alt="{{ p.name }}" />
+          </div>
+          <div class="details">
+            <h4>{{ p.name }}</h4>
+            <div class="info-row">
+              <span class="likes" [attr.aria-label]="'Cantidad de likes: ' + p.likes_count">
+                <ion-icon name="heart"></ion-icon>
+              </span>
+              <span class="status" [class.disponible]="p.status === 'disponible'"
+                [class.intercambiado]="p.status === 'intercambiado'">
+                {{ p.status | titlecase }}
+              </span>
+            </div>
+          </div>
+        </div>
+        }
+
+        @if (!likedProducts.length) {
+        <div class="empty">
+          <ion-icon name="heart-outline"></ion-icon>
+          <p>Aún no has dado like a ningún producto</p>
+        </div>
+        }
+      </div>
+    </div>
+  </ion-accordion>
+</ion-accordion-group>
+
 
   <!-- boton de cerrar sesion -->
   <ion-button expand="block" color="danger" class="ion-margin" (click)="logout()">
