@@ -16,40 +16,40 @@
         (contextmenu)="msg.sentByUser && confirmDeleteMessage(msg); $event.preventDefault()"
         (press)="msg.sentByUser && confirmDeleteMessage(msg)"
       >
-        <!-- Estado eliminado -->
         <div *ngIf="msg.deleted" class="message-deleted">Mensaje eliminado</div>
 
-        <!-- Imagen -->
         <div *ngIf="!msg.deleted && msg.imageUrl" class="message-image">
           <img [src]="msg.imageUrl" alt="imagen" (load)="onImageLoaded()" />
         </div>
 
-        <!-- Texto -->
-        <div *ngIf="!msg.deleted && msg.text" class="message-text">{{ msg.text }}</div>
+        <div *ngIf="!msg.deleted && msg.text" class="message-text">
+          {{ msg.text }}
+        </div>
 
-        <!-- Footer con hora, palomitas y papelera -->
         <div class="message-time" *ngIf="!msg.deleted">
           {{ msg.time }}
           <ion-icon *ngIf="msg.sentByUser && !msg.readAt" name="checkmark-outline"></ion-icon>
           <ion-icon *ngIf="msg.sentByUser && msg.readAt" name="checkmark-done-outline" class="read"></ion-icon>
-          <ion-icon
-            *ngIf="msg.sentByUser"
-            name="trash-outline"
-            class="delete-icon"
-            (click)="confirmDeleteMessage(msg)"
-          ></ion-icon>
+          <ion-icon *ngIf="msg.sentByUser" name="trash-outline" class="delete-icon" (click)="confirmDeleteMessage(msg)"></ion-icon>
         </div>
       </div>
     </ng-container>
   </div>
 
-  <!-- Espaciador para que el último mensaje no quede debajo del composer -->
   <div class="bottom-spacer"></div>
+</ion-content>
 
-  <!-- Composer fijo -->
-  <ion-toolbar class="composer-toolbar" slot="fixed">
+<!-- Composer SIEMPRE visible encima de la TabBar -->
+<ion-footer class="composer-footer">
+  <ion-toolbar>
     <ion-item lines="none">
-      <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"></ion-input>
+      <ion-input
+        [(ngModel)]="newMessage"
+        placeholder="Escribe un mensaje..."
+        type="text"
+        (ionFocus)="scrollToBottomSoon()"
+        (ionInput)="scrollToBottomSoon()"
+      ></ion-input>
 
       <input type="file" (change)="onImageSelected($event)" accept="image/*" hidden #imageInput>
       <ion-button fill="clear" (click)="imageInput.click()">
@@ -61,4 +61,4 @@
       </ion-button>
     </ion-item>
   </ion-toolbar>
-</ion-content>
+</ion-footer>

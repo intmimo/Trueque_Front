@@ -1,40 +1,54 @@
-/* Alturas base */
 :host {
-  --composer-h: 20px;   /* alto de tu toolbar de mensaje */
-  --tabbar-h: 70px;
+  --composer-h: 72px; /* Alto del composer */
 }
 
-/* Content */
 ion-content.chat-content {
   --padding-start: 10px;
   --padding-end: 10px;
   background: #0f1422;
 }
 
-/* Reserva espacio en el área scrolleable para composer + tabbar */
+/* 👉 Reservar solo espacio para el composer */
 ion-content.chat-content::part(scroll) {
-  padding-bottom: calc(var(--composer-h) + var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(var(--composer-h) + env(safe-area-inset-bottom, 0px));
 }
-/* Listado */
+
 .messages-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-height: 100%;
+  padding: 12px;
 }
 
-/* Composer fijo por encima de la tab bar */
-.composer-toolbar {
+/* Footer/composer pegado a la TabBar sin franja */
+ion-footer.composer-footer {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: var(--tabbar-h); /* <- si sigue alto, baja --tabbar-h */
-  z-index: 1000;
-  --background: var(--ion-background-color, #0f1422);
-  box-shadow: 0 -2px 8px rgba(0,0,0,.15);
+  bottom: 0; /* pegado directamente a la tabbar */
+  z-index: 11;
+  --background: var(--ion-background-color, #fff);
+  box-shadow: none;
+  border-top: 1px solid rgba(0,0,0,.08);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  border-top: 1px solid rgba(255,255,255,.08); /* separador sutil */
 }
+
+ion-footer.composer-footer ion-toolbar {
+  min-height: var(--composer-h);
+}
+
+ion-footer.composer-footer ion-item {
+  --min-height: var(--composer-h);
+  --inner-padding-start: 8px;
+  --inner-padding-end: 8px;
+}
+
+/* Quita línea de la tabbar que a veces se ve como gap */
+ion-tab-bar {
+  --border: 0;
+}
+
 /* Burbujas */
 .message-bubble {
   max-width: 80%;
@@ -47,25 +61,38 @@ ion-content.chat-content::part(scroll) {
   color: #111;
   align-self: flex-start;
 }
-.message-bubble.sent { background:#d1ffd6; align-self:flex-end; text-align:right; }
-.message-text { white-space: pre-wrap; }
-.message-image img { display:block; width:100%; height:auto; border-radius:8px; }
-.message-time { margin-top:4px; font-size:12px; opacity:.65; text-align:right; }
 
-
-.message-time { display: flex; align-items: center; gap: 4px; }
-.message-time .read { color: #3b82f6; }
-
-.chat-content {
-  --padding-bottom: 92px; /* Altura del composer */
+.message-bubble.sent {
+  background: #d1ffd6;
+  align-self: flex-end;
+  text-align: right;
 }
 
-.messages-list {
-  padding: 12px;
+.message-text {
+  white-space: pre-wrap;
+}
+
+.message-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.message-time {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: .65;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
+.message-time .read {
+  color: #3b82f6;
+}
+
+/* Espaciador opcional si no quieres que el último mensaje se tape */
 .bottom-spacer {
-  height: 92px; /* Igual que --padding-bottom */
+  height: var(--composer-h);
 }

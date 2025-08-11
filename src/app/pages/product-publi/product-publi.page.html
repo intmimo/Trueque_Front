@@ -3,17 +3,51 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/profile" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Publicar Producto</ion-title>
+    <ion-title>{{ isEdit ? 'Editar Producto' : 'Publicar Producto' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding content-bg">
   <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+
+    <!-- === Imágenes actuales (solo en edición) === -->
+    <ion-card class="form-card" *ngIf="isEdit">
+      <ion-card-header>
+        <ion-card-title>Imágenes actuales</ion-card-title>
+        <ion-card-subtitle>Marca las que quieras eliminar</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="image-preview-container" *ngIf="existingImages?.length; else noExisting">
+          <div
+            class="image-preview"
+            *ngFor="let img of existingImages; let i = index"
+            [style.opacity]="img.removed ? 0.35 : 1"
+          >
+            <img [src]="img.url" (error)="img.url='https://via.placeholder.com/300x200?text=Sin+imagen'"/>
+            <!-- Toggle eliminar/restaurar -->
+            <ion-icon
+              [name]="img.removed ? 'refresh-circle' : 'trash'"
+              class="remove-icon"
+              (click)="toggleRemoveExisting(i)"
+              title="{{ img.removed ? 'Restaurar' : 'Eliminar' }}"
+            ></ion-icon>
+          </div>
+        </div>
+
+        <ng-template #noExisting>
+          <ion-note color="medium">Este producto aún no tiene imágenes guardadas.</ion-note>
+        </ng-template>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- === Imágenes nuevas === -->
     <ion-card class="form-card">
       <ion-card-header>
         <ion-card-title>Imágenes del producto</ion-card-title>
         <ion-card-subtitle>Puedes subir hasta 10 imágenes</ion-card-subtitle>
       </ion-card-header>
+
       <ion-card-content>
         <input
           type="file"
@@ -23,25 +57,25 @@
         />
 
         <div class="image-preview-container">
-          <div
-            class="image-preview"
-            *ngFor="let img of imagePreviews; let i = index"
-          >
+          <div class="image-preview" *ngFor="let img of imagePreviews; let i = index">
             <img [src]="img" />
             <ion-icon
               name="close-circle"
               class="remove-icon"
               (click)="removeImage(i)"
+              title="Quitar imagen"
             ></ion-icon>
           </div>
         </div>
       </ion-card-content>
     </ion-card>
 
+    <!-- === Detalles del producto === -->
     <ion-card class="form-card">
       <ion-card-header>
         <ion-card-title>Detalles del producto</ion-card-title>
       </ion-card-header>
+
       <ion-card-content>
         <ion-item>
           <ion-label position="stacked">Título</ion-label>
@@ -76,19 +110,30 @@
             placeholder="Ej. Oaxaca, CDMX"
           ></ion-input>
         </ion-item>
+
+        <!-- Estado (visible en edición) -->
+        <ion-item *ngIf="isEdit">
+          <ion-label position="stacked">Estado</ion-label>
+          <ion-select formControlName="status" interface="popover">
+            <ion-select-option value="disponible">Disponible</ion-select-option>
+            <ion-select-option value="intercambiado">Intercambiado</ion-select-option>
+          </ion-select>
+        </ion-item>
       </ion-card-content>
     </ion-card>
 
+    <!-- === Botón guardar/publicar === -->
     <div class="submit-button-container">
       <ion-button
         expand="block"
         color="primary"
         type="submit"
-        [disabled]="productForm.invalid || selectedFiles.length === 0"
+        [disabled]="productForm.invalid || (!isEdit && selectedFiles.length === 0)"
       >
-        <ion-icon name="send" slot="start"></ion-icon>
-        Publicar Producto
+        <ion-icon [name]="isEdit ? 'save-outline' : 'send'" slot="start"></ion-icon>
+        {{ isEdit ? 'Guardar cambios' : 'Publicar Producto' }}
       </ion-button>
     </div>
+
   </form>
 </ion-content>

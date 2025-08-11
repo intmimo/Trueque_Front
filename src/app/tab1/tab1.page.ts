@@ -22,7 +22,7 @@ export class Tab1Page implements OnInit {
   // ⭐ Rating
   ratingAvg = 0;
   ratingCount = 0;
-  ratings: any[] = []; // lista de calificaciones recibidas (con rater, value, comment...)
+  ratings: any[] = []; // lista de calificaciones (por ahora vacía porque tu back no expone historial)
 
   constructor(
     private authService: AuthService,
@@ -31,12 +31,12 @@ export class Tab1Page implements OnInit {
     private ratingService: RatingService
   ) {}
 
-  // Carga inicial (primera vez que se monta el componente)
+  // Carga inicial
   ngOnInit() {
     this.refreshAll();
   }
 
-  // Se ejecuta SIEMPRE que esta vista vuelve a activarse (por ejemplo, al regresar de editar perfil)
+  // Cada vez que la vista regresa
   ionViewWillEnter() {
     this.refreshAll();
   }
@@ -51,13 +51,13 @@ export class Tab1Page implements OnInit {
 
     this.authService.getProfile().subscribe({
       next: (res) => {
-        this.user = res.user; // { user: {...} } en tu backend
+        this.user = res.user; // { user: {...} }
         if (this.user?.id) {
           this.getUserProducts(this.user.id);
           this.cargarMisProductos();
           this.loadRatings(this.user.id);
-          this.loadRatingHistory(this.user.id);
-          this.loadLikedProducts(this.user.id);
+          // ❌ Antes llamaba a loadRatingHistory -> 404 porque no existe /api/rating/history/:id
+          this.loadLikedProducts(this.user.id); // ✅ usa /users/:id/likes
         }
       },
       error: (err) => console.error('Error al cargar perfil:', err)
@@ -72,36 +72,24 @@ export class Tab1Page implements OnInit {
 
   // Obtener URL de la foto de perfil del usuario actual
   getProfilePhotoUrl(): string {
-
-    // Prioridad 1: Si el backend ya devuelve la URL completa
     if (this.user?.profile_photo_url) {
-      // El backend ya devuelve la URL completa, pero puede que falte el dominio
       let photoUrl = this.user.profile_photo_url;
-
-      // Si la URL es relativa (/storage/...), agregar el dominio
       if (photoUrl.startsWith('/storage/')) {
         photoUrl = 'http://localhost:8000' + photoUrl;
       }
-
       return photoUrl;
     }
 
-    // Prioridad 2: Si tiene el path relativo
     if (this.user?.profile_photo) {
       const photoUrl = this.imageBaseUrl + this.user.profile_photo;
-      console.log('✅ URL de foto generada:', photoUrl); // DEBUG
       return photoUrl;
     }
 
-    // Fallback: avatar generado
-    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(this.user?.name || 'User')}&background=0ea5e9&color=fff&size=128`;
-    console.log('⭐ Usando avatar generado:', avatarUrl); // DEBUG
-    return avatarUrl;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(this.user?.name || 'User')}&background=0ea5e9&color=fff&size=128`;
   }
 
   // Obtener URL de foto para calificadores
   getRaterPhotoUrl(rater: any): string {
-    // Prioridad 1: URL completa del backend
     if (rater?.profile_photo_url) {
       let photoUrl = rater.profile_photo_url;
       if (photoUrl.startsWith('/storage/')) {
@@ -110,18 +98,15 @@ export class Tab1Page implements OnInit {
       return photoUrl;
     }
 
-    // Prioridad 2: Path relativo
     if (rater?.profile_photo) {
       return this.imageBaseUrl + rater.profile_photo;
     }
 
-    // Fallback: avatar generado
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(rater?.name || 'User')}&background=9ca3af&color=fff&size=64`;
   }
 
   // Manejar error de imagen (fallback)
   onImageError(event: any) {
-    // Si falla cargar la imagen de perfil, usar avatar generado
     const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(this.user?.name || 'User')}&background=0ea5e9&color=fff&size=128`;
     event.target.src = fallbackUrl;
   }
@@ -131,9 +116,12 @@ export class Tab1Page implements OnInit {
     this.http.get<any>(`${this.API_URL}/users/${userId}/products`, { headers: this.getAuthHeaders() })
       .subscribe({
         next: (res) => {
-          this.products = res.data || res.products || [];
+          this.products = res?.data || res?.products || [];
         },
-        error: (err) => console.error('Error al obtener productos:', err)
+        error: (err) => {
+          this.products = [];
+          console.error('Error al obtener productos:', err);
+        }
       });
   }
 
@@ -142,25 +130,50 @@ export class Tab1Page implements OnInit {
     this.http.get<any>(`${this.API_URL}/my-products`, { headers: this.getAuthHeaders() })
       .subscribe({
         next: (res) => {
-          this.products = res.data || res.products || [];
+          this.products = res?.data || res?.products || [];
         },
-        error: (err) => console.error('Error al obtener mis productos:', err)
+        error: (err) => {
+          this.products = [];
+          console.error('Error al obtener mis productos:', err);
+        }
       });
   }
 
-
-  // ⭐ Cargar ratings (promedio + lista)
+  // ⭐ Cargar ratings (promedio + conteo)
   loadRatings(userId: number) {
     this.ratingService.getUserRatings(userId).subscribe({
       next: (res) => {
-        console.log('Respuesta ratings:', res);
-
-        this.ratingAvg = Number(res.average_rating) || 0;
-        this.ratingCount = Number(res.rating_count) || 0;
-
-        this.ratings = []; // No hay lista de ratings en esta respuesta
+        this.ratingAvg = Number(res?.average_rating) || 0;
+        this.ratingCount = Number(res?.rating_count) || 0;
+        // Tu back no devuelve listado detallado, dejamos vacío para no romper la vista
+        this.ratings = [];
       },
-      error: (err) => console.error('Error al cargar ratings:', err)
+      error: (err) => {
+        this.ratingAvg = 0;
+        this.ratingCount = 0;
+        this.ratings = [];
+        console.error('Error al cargar ratings:', err);
+      }
+    });
+  }
+
+  // ⭐ Productos que he dado like
+  loadLikedProducts(userId: number) {
+    // 🔁 Usa la ruta que SÍ tienes: GET /users/{id}/likes (pública)
+    this.http.get<any>(`${this.API_URL}/users/${userId}/likes`, {
+      headers: this.getAuthHeaders() // enviar token no estorba
+    }).subscribe({
+      next: (res) => {
+        this.likedProducts = res?.data || res?.likes || [];
+        if (!Array.isArray(this.likedProducts)) {
+          this.likedProducts = [];
+        }
+        console.log('Productos liked:', this.likedProducts);
+      },
+      error: (err) => {
+        this.likedProducts = []; // evita errores de .length en la vista
+        console.error('Error al obtener productos liked:', err);
+      }
     });
   }
 
@@ -186,7 +199,7 @@ export class Tab1Page implements OnInit {
     return this.stars.map((_, i) => ({ index: i }));
   }
 
-  //funcion de cerrar sesion
+  // Cerrar sesión
   logout() {
     Swal.fire({
       title: '¿Quieres cerrar sesión?',
@@ -260,7 +273,7 @@ export class Tab1Page implements OnInit {
     });
   }
 
-  //helper para la alerta
+  // helper para la alerta
   private fixSwalContainer() {
     const container = document.querySelector('.swal2-container');
     if (container) {
@@ -268,28 +281,6 @@ export class Tab1Page implements OnInit {
       (container as HTMLElement).style.width = '100vw';
     }
   }
-
-  // ⭐ Cargar historial completo de calificaciones
-loadRatingHistory(userId: number) {
-  this.ratingService.getUserRatingHistory(userId).subscribe({
-    next: (res) => {
-      console.log('Historial de ratings:', res);
-      this.ratings = res.ratings;  // Aquí sí hay lista de calificaciones
-    },
-    error: (err) => console.error('Error al cargar historial de ratings:', err)
-  });
-}
-
-loadLikedProducts(userId: number) {
-  this.http.get<any>(`${this.API_URL}/user/${userId}/liked-products`, { headers: this.getAuthHeaders() })
-    .subscribe({
-      next: (res) => {
-        this.likedProducts = res.data || [];
-        console.log('Productos liked:', this.likedProducts);
-      },
-      error: (err) => console.error('Error al obtener productos liked:', err)
-    });
-}
 
   // Navegar al detalle del producto
   goToProductDetail(productId: number) {
