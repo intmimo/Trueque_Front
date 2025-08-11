@@ -38,11 +38,29 @@
           <p><strong>Ubicación:</strong> {{ i.user.municipio }}, {{ i.user.colonia }}</p>
         </ion-label>
       </ion-card-content>
-      <ion-button expand="block" class="button" (click)="chat()">
-        <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
-        Me interesa
-      </ion-button>
-      <ion-button expand="block" class="button" (click)="shareProduct()" class="share-button">
+
+      <!-- Botones para productos de otros usuarios -->
+      @if (!isMyProduct) {
+        <ion-button expand="block" class="button" (click)="chat()">
+          <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
+          Me interesa
+        </ion-button>
+      }
+
+      <!-- Botones para mis productos -->
+      @if (isMyProduct) {
+        <ion-button expand="block" color="warning" class="button" (click)="editProduct()">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Editar producto
+        </ion-button>
+        <ion-button expand="block" color="danger" class="button" (click)="deleteProduct()">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Eliminar producto
+        </ion-button>
+      }
+
+      <!-- Botón compartir (siempre visible) -->
+      <ion-button expand="block" class="button share-button" (click)="shareProduct()">
         <ion-icon name="share-social-outline" slot="start"></ion-icon>
         Compartir
       </ion-button>

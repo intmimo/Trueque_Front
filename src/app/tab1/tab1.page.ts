@@ -268,4 +268,9 @@ export class Tab1Page implements OnInit {
       (container as HTMLElement).style.width = '100vw';
     }
   }
+
+  // Navegar al detalle del producto
+  goToProductDetail(productId: number) {
+    this.router.navigate(['/product-detail', productId]);
+  }
 }

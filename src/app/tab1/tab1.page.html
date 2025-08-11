@@ -58,7 +58,7 @@
 
   <div class="products-grid">
     @for (p of products; track p.id) {
-    <div class="product-card">
+    <div class="product-card" (click)="goToProductDetail(p.id)">
       <div class="thumb">
         <img
           [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
