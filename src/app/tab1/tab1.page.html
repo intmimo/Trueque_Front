@@ -132,6 +132,49 @@
     </ion-accordion>
   </ion-accordion-group>
 
+  <!-- Productos que te gustaron -->
+<ion-accordion-group>
+  <ion-accordion value="liked-products">
+    <ion-item slot="header" color="light">
+      <ion-label>Mis me gusta</ion-label>
+    </ion-item>
+
+    <div slot="content">
+      <div class="products-grid">
+        @for (p of likedProducts; track p.id) {
+        <div class="product-card">
+          <div class="thumb">
+            <img
+              [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
+              alt="{{ p.name }}" />
+          </div>
+          <div class="details">
+            <h4>{{ p.name }}</h4>
+            <div class="info-row">
+              <span class="likes" [attr.aria-label]="'Cantidad de likes: ' + p.likes_count">
+                <ion-icon name="heart"></ion-icon>
+              </span>
+              <span class="status" [class.disponible]="p.status === 'disponible'"
+                [class.intercambiado]="p.status === 'intercambiado'">
+                {{ p.status | titlecase }}
+              </span>
+            </div>
+          </div>
+        </div>
+        }
+
+        @if (!likedProducts.length) {
+        <div class="empty">
+          <ion-icon name="heart-outline"></ion-icon>
+          <p>Aún no has dado like a ningún producto</p>
+        </div>
+        }
+      </div>
+    </div>
+  </ion-accordion>
+</ion-accordion-group>
+
+
   <!-- boton de cerrar sesion -->
   <ion-button expand="block" color="danger" class="ion-margin" (click)="logout()">
     Cerrar sesión

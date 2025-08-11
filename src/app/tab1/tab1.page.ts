@@ -17,6 +17,7 @@ export class Tab1Page implements OnInit {
 
   user: any;
   products: any[] = [];
+  likedProducts: any[] = [];
 
   // ⭐ Rating
   ratingAvg = 0;
@@ -56,6 +57,7 @@ export class Tab1Page implements OnInit {
           this.cargarMisProductos();
           this.loadRatings(this.user.id);
           this.loadRatingHistory(this.user.id);
+          this.loadLikedProducts(this.user.id);
         }
       },
       error: (err) => console.error('Error al cargar perfil:', err)
@@ -278,5 +280,15 @@ loadRatingHistory(userId: number) {
   });
 }
 
+loadLikedProducts(userId: number) {
+  this.http.get<any>(`${this.API_URL}/user/${userId}/liked-products`, { headers: this.getAuthHeaders() })
+    .subscribe({
+      next: (res) => {
+        this.likedProducts = res.data || [];
+        console.log('Productos liked:', this.likedProducts);
+      },
+      error: (err) => console.error('Error al obtener productos liked:', err)
+    });
+}
 
 }
