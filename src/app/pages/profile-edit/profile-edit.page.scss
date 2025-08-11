@@ -1,0 +1,89 @@
+ion-content {
+  background: #e7e9ec;  // gris muy claro para el fondo de toda la pantalla
+
+  form {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #f5f7fa;  // gris claro, limpio y suave para el formulario
+    border: 1.5px solid #c0c5cc;  // borde gris medio, muy sutil
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    padding: 28px 24px;
+
+    ion-list {
+      --ion-item-background: transparent;
+      --ion-item-border-color: #d1d5db;  // gris suave para separar items
+      --ion-item-border-width: 1.2px;
+      border-radius: 14px;
+      overflow: hidden;
+
+      ion-item {
+        --min-height: 70px;
+        border-bottom: 1.2px solid #d1d5db;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        ion-label {
+          font-weight: 600;
+          font-size: 1rem;
+          color: #374151;  // gris oscuro para texto
+          margin-bottom: 8px;
+        }
+
+        ion-input {
+          --padding-start: 14px;
+          font-size: 1.05rem;
+          color: #1f2937;  // texto un poco más oscuro para buen contraste
+
+          input {
+            padding: 12px 14px;
+            background: #ffffff; // fondo blanco para inputs para contraste limpio
+            border-radius: 8px;
+            border: 1.3px solid #c0c5cc; // borde sutil para inputs
+            transition: border-color 0.3s ease;
+
+            &:focus {
+              border-color: #3b82f6;  // azul moderno para foco
+              outline: none;
+              box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+            }
+          }
+        }
+
+        ion-button[fill="clear"] {
+          --padding-start: 8px;
+          --padding-end: 8px;
+          --ion-color-base: transparent;
+          --ion-color-base-rgb: 0, 0, 0;
+          font-size: 1.4rem;
+          color: #6b7280;
+
+          &:hover {
+            color: #374151;
+          }
+        }
+      }
+    }
+
+    .ion-padding-top {
+      margin-top: 36px;
+      ion-button {
+        font-weight: 700;
+        font-size: 1.2rem;
+        padding: 16px 0;
+        border-radius: 14px;
+        background: #2563eb;  // azul intenso para botón, moderno y serio
+        box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45);
+        color: #fff;
+
+        &:disabled {
+          background: #94a3b8;
+          box-shadow: none;
+          color: #f3f4f6;
+        }
+      }
+    }
+  }
+}

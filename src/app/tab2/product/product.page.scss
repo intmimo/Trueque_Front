@@ -1,92 +1,198 @@
-// Estilos para resaltar términos de búsqueda
+// Resaltar términos de búsqueda
 mark {
   background-color: var(--ion-color-warning);
   color: var(--ion-color-warning-contrast);
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-weight: bold;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
-// Estilos para la barra de búsqueda
+// Barra de búsqueda
 ion-searchbar {
   --background: var(--ion-color-light);
-  --border-radius: 8px;
-  margin: 8px 16px;
-  
+  --border-radius: 10px;
+  margin: 12px 20px;
+
   .searchbar-input {
-    font-size: 16px;
+    font-size: 1.1rem;
+    padding: 8px 12px;
   }
 }
 
-// Estilos para el segmento de filtros
-ion-segment {
-  --background: var(--ion-color-light);
-  margin-bottom: 8px;
-  
-  ion-segment-button {
-    --indicator-color: var(--ion-color-primary);
-    --color-checked: var(--ion-color-primary);
+// Segmento de filtros (chips)
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 16px 16px 16px;
+
+  ion-chip {
+    font-size: 0.9rem;
+    min-width: 90px;
+    ion-icon {
+      font-size: 1.2rem;
+      margin-right: 6px;
+    }
   }
 }
 
-// Estilos para la información del usuario
+// Info usuario dentro de cada producto
 .user-info {
-  transition: opacity 0.2s ease;
-  
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.3s ease;
+
   &:hover {
-    opacity: 0.8;
+    opacity: 0.75;
   }
-  
+
   img {
-    object-fit: cover;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     border: 2px solid var(--ion-color-light);
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  span {
+    font-size: 0.95rem;
+    color: var(--ion-color-dark);
+    font-weight: 600;
   }
 }
 
-// Estilos para mensajes de estado
+// Mensajes de estado (sin resultados, etc)
 .ion-text-center {
+  padding: 40px 16px;
+
   ion-icon {
-    margin-bottom: 16px;
+    font-size: 48px;
+    margin-bottom: 18px;
+    color: var(--ion-color-medium);
   }
-  
+
   p {
     color: var(--ion-color-medium);
-    font-size: 16px;
-    margin-bottom: 16px;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  ion-button {
+    font-size: 1rem;
   }
 }
 
-// Animación para los elementos de la lista
+// Animación en lista de productos (ion-item)
 ion-item {
-  --transition: transform 0.2s ease, box-shadow 0.2s ease;
-  
+  --transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 12px;
+  margin: 6px 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  background: #fff;
+
   &:hover {
-    transform: translateX(4px);
-    --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(6px);
+    --box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  ion-thumbnail {
+    border-radius: 12px;
+    overflow: hidden;
+    width: 70px;
+    height: 70px;
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  }
+
+  ion-label {
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #111827;
+      line-height: 1.3;
+    }
+    p {
+      font-size: 0.95rem;
+      color: #4b5563;
+      margin: 0;
+      line-height: 1.4;
+    }
   }
 }
 
-// Estilo para el botón flotante
+// Botón flotante refrescar
 ion-fab-button {
   --background: var(--ion-color-primary);
   --color: var(--ion-color-primary-contrast);
-  
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+
   &:hover {
     --background: var(--ion-color-primary-shade);
   }
 }
 
-// Responsive design
+// Responsive
 @media (max-width: 768px) {
-  ion-segment {
-    ion-segment-button {
-      ion-label {
-        font-size: 12px;
+  ion-searchbar {
+    margin: 8px 12px;
+
+    .searchbar-input {
+      font-size: 1rem;
+      padding: 6px 10px;
+    }
+  }
+
+  .filter-chips {
+    gap: 8px;
+    padding: 0 12px 12px 12px;
+
+    ion-chip {
+      min-width: 70px;
+      font-size: 0.85rem;
+
+      ion-icon {
+        font-size: 1rem;
       }
     }
   }
-  
-  ion-searchbar {
-    margin: 4px 8px;
+
+  ion-item {
+    margin: 6px 12px;
+
+    ion-thumbnail {
+      width: 60px;
+      height: 60px;
+    }
+
+    ion-label {
+      h2 {
+        font-size: 1rem;
+      }
+      p {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .user-info {
+    img {
+      width: 28px;
+      height: 28px;
+      margin-right: 8px;
+    }
+    span {
+      font-size: 0.85rem;
+    }
   }
 }

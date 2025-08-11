@@ -1,51 +1,86 @@
 .profile-header {
   display: flex;
-  gap: 16px;
-  padding: 16px;
+  gap: 20px;
+  padding: 20px 16px;
   align-items: center;
 
   .avatar {
-    width: 88px; height: 88px; border-radius: 50%; overflow: hidden;
-    img { width: 100%; height: 100%; object-fit: cover; }
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
   }
 
   .info {
     flex: 1;
-    h2 { margin: 0 0 4px; font-weight: 700; }
+    h2 {
+      margin: 0 0 6px;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #2067ff;
+    }
     .location {
-      margin: 0 0 8px;
+      margin: 0 0 10px;
       color: #6b7280;
-      ion-icon { vertical-align: middle; margin-right: 4px; }
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      ion-icon {
+        font-size: 1.1rem;
+        vertical-align: middle;
+      }
     }
     .rating-row {
-      display: flex; align-items: center; gap: 6px;
-      span { color: #d1d5db; font-size: 20px; }
-      .filled { color: #f59e0b; }
-      .score { color: #111827; font-weight: 600; margin-left: 6px; }
-      .count { color: #6b7280; }
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      span {
+        color: #d1d5db;
+        font-size: 22px;
+        line-height: 1;
+        user-select: none;
+      }
+      .filled {
+        color: #f59e0b;
+      }
+      .count {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
     }
   }
 }
 
 .products-grid {
-  padding: 12px;
+  padding: 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
 
   .product-card {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
     }
 
     .thumb {
@@ -57,24 +92,24 @@
         height: 100%;
         object-fit: cover;
         display: block;
+        border-radius: 14px 14px 0 0;
         border-bottom: 1.5px solid #e5e7eb;
-        border-radius: 12px 12px 0 0;
       }
     }
 
     .details {
-      padding: 8px 12px;
+      padding: 10px 14px;
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
 
       h4 {
-        font-size: 0.95rem;
+        font-size: 1.05rem;
         font-weight: 600;
-        margin: 0 0 6px;
+        margin: 0 0 8px;
         color: #111827;
-        line-height: 1.2;
+        line-height: 1.3;
       }
 
       .info-row {
@@ -85,20 +120,19 @@
         .likes {
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 6px;
           color: #ef4444;
           font-weight: 600;
-          font-size: 0.8rem;
+          font-size: 0.9rem;
 
           ion-icon {
-            font-size: 16px;
-            vertical-align: middle;
+            font-size: 18px;
           }
         }
 
         .status {
-          font-size: 0.75rem;
-          padding: 3px 10px;
+          font-size: 0.8rem;
+          padding: 4px 12px;
           border-radius: 9999px;
           color: white;
           text-transform: capitalize;
@@ -118,52 +152,96 @@
   }
 }
 
-
 .empty {
   text-align: center;
-  padding: 48px 0;
+  padding: 60px 0;
   color: #6b7280;
+
   ion-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
+    font-size: 52px;
+    margin-bottom: 20px;
   }
+
   p {
-    font-size: 1.1rem;
-    font-weight: 500;
+    font-size: 1.25rem;
+    font-weight: 600;
   }
 }
 
 .ratings-list {
-  padding: 12px;
+  padding: 16px;
+
   .rating-item {
-    background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 10px;
-    box-shadow: 0 1px 8px rgba(0,0,0,.05);
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.07);
 
     .rater {
-      display: flex; align-items: center; gap: 10px;
-      img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-      h5 { margin: 0; font-size: 14px; font-weight: 600; }
-      small { color: #6b7280; }
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      h5 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      small {
+        color: #6b7280;
+        font-size: 0.85rem;
+      }
     }
+
     .stars {
-      margin-top: 8px; display: flex; align-items: center; gap: 6px;
-      span { color: #d1d5db; font-size: 18px; }
-      .filled { color: #f59e0b; }
-      .value { color: #374151; font-weight: 600; }
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      span {
+        color: #d1d5db;
+        font-size: 20px;
+      }
+
+      .filled {
+        color: #f59e0b;
+      }
+
+      .value {
+        color: #374151;
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
     }
+
     .comment {
-      margin: 8px 0 0;
-      color: #374151; font-size: 14px;
+      margin: 10px 0 0;
+      color: #374151;
+      font-size: 1rem;
+      line-height: 1.4;
     }
   }
 
   .empty {
-    text-align: center; color: #6b7280; padding: 24px 0;
-    ion-icon { font-size: 28px; display: block; margin-bottom: 8px; }
-  }
-}
+    text-align: center;
+    color: #6b7280;
+    padding: 28px 0;
 
-.empty {
-  text-align: center; padding: 24px 0; color: #6b7280;
-  ion-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+    ion-icon {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 10px;
+    }
+  }
 }
