@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Share } from '@capacitor/share';
 import { ChatService } from 'src/app/services/chat.service';
 import { ProductService } from 'src/app/services/product.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-registro',
@@ -22,33 +23,65 @@ export class ProductDetailPage implements OnInit {
   product: any;
   isLiked = false;
   likesCount = 0;
+  isMyProduct = false; // Nueva propiedad para determinar si es mi producto
+  currentUserId: number | null = null; // ID del usuario actual
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router,
     private chat_service: ChatService,
-    private product_service: ProductService
+    private product_service: ProductService,
+    private authService: AuthService // Agregamos AuthService
   ) { }
 
-ngOnInit() {
-  const productId = this.route.snapshot.paramMap.get('id')!;
-this.product_service.getProductById(+productId).subscribe(response => {
-  const data = response.data;
-  this.product = data.product;  // Aquí extraemos sólo el producto
-  this.isLiked = data.is_liked_by_user || false;
-  this.likesCount = data.total_likes || 0;
+  ngOnInit() {
+    this.loadCurrentUser();
+    this.loadProductDetail();
+  }
 
-  this.product.images = this.product.images.map((img: any) => ({
-    ...img,
-    image_url: `http://localhost:8000/storage/${img.image_path}`
-  }));
-  console.log(response)
-});
+  private loadCurrentUser() {
+    // Obtener información del usuario actual
+    this.authService.getProfile().subscribe({
+      next: (res) => {
+        this.currentUserId = res.user?.id;
+        this.checkIfMyProduct(); // Verificar propiedad después de cargar usuario
+      },
+      error: (err) => {
+        console.error('Error al cargar perfil del usuario:', err);
+      }
+    });
+  }
 
+  private loadProductDetail() {
+    const productId = this.route.snapshot.paramMap.get('id')!;
+    this.product_service.getProductById(+productId).subscribe({
+      next: (response) => {
+        const data = response.data;
+        this.product = data.product;
+        this.isLiked = data.is_liked_by_user || false;
+        this.likesCount = data.total_likes || 0;
 
-}
+        this.product.images = this.product.images.map((img: any) => ({
+          ...img,
+          image_url: `http://localhost:8000/storage/${img.image_path}`
+        }));
 
+        this.checkIfMyProduct(); // Verificar propiedad después de cargar producto
+        console.log(response);
+      },
+      error: (err) => {
+        console.error('Error al cargar detalle del producto:', err);
+      }
+    });
+  }
+
+  private checkIfMyProduct() {
+    // Verificar si el producto pertenece al usuario actual
+    if (this.currentUserId && this.product?.user?.id) {
+      this.isMyProduct = this.currentUserId === this.product.user.id;
+    }
+  }
 
   chat() {
     if (!this.product?.user?.id) {
@@ -80,37 +113,49 @@ this.product_service.getProductById(+productId).subscribe(response => {
     });
   }
 
-toggleLike() {
-  if (!this.product?.id) return;
+  toggleLike() {
+    if (!this.product?.id) return;
 
-  if (this.isLiked) {
-    // Quitar like
-    this.product_service.unlikeProduct(this.product.id).subscribe({
-      next: (res) => {
-        this.isLiked = false;
-        this.likesCount = res.product?.total_likes ?? (this.likesCount > 0 ? this.likesCount - 1 : 0);
-      },
-      error: (err) => console.error('Error al quitar like:', err)
-    });
-  } else {
-    // Dar like
-    this.product_service.likeProduct(this.product.id).subscribe({
-      next: (res) => {
-        this.isLiked = true;
-        this.likesCount = res.product?.total_likes ?? this.likesCount + 1;
-      },
-      error: (err) => {
-        // Si ya diste like (error 400), solo actualizamos estado sin lanzar error
-        if (err.status === 400 && err.error?.message?.includes('Ya has dado like')) {
-          console.warn('Ya habías dado like, ajustando estado local.');
+    if (this.isLiked) {
+      // Quitar like
+      this.product_service.unlikeProduct(this.product.id).subscribe({
+        next: (res) => {
+          this.isLiked = false;
+          this.likesCount = res.product?.total_likes ?? (this.likesCount > 0 ? this.likesCount - 1 : 0);
+        },
+        error: (err) => console.error('Error al quitar like:', err)
+      });
+    } else {
+      // Dar like
+      this.product_service.likeProduct(this.product.id).subscribe({
+        next: (res) => {
           this.isLiked = true;
-        } else {
-          console.error('Error al dar like:', err);
+          this.likesCount = res.product?.total_likes ?? this.likesCount + 1;
+        },
+        error: (err) => {
+          // Si ya diste like (error 400), solo actualizamos estado sin lanzar error
+          if (err.status === 400 && err.error?.message?.includes('Ya has dado like')) {
+            console.warn('Ya habías dado like, ajustando estado local.');
+            this.isLiked = true;
+          } else {
+            console.error('Error al dar like:', err);
+          }
         }
-      }
-    });
+      });
+    }
   }
-}
 
+  // Método para editar producto (placeholder)
+  editProduct() {
+    console.log('Editando producto:', this.product.id);
+    // TODO: Implementar navegación a página de edición
+    // this.router.navigate(['/product-edit', this.product.id]);
+  }
 
+  // Método para eliminar producto (placeholder)
+  deleteProduct() {
+    console.log('Eliminando producto:', this.product.id);
+    // TODO: Implementar confirmación y eliminación
+    // Swal.fire para confirmar eliminación
+  }
 }

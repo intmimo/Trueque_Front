@@ -48,46 +48,47 @@
 
 
   <!-- Productos publicados -->
-  <ion-accordion-group>
-    <ion-accordion value="productos">
-      <ion-item slot="header" color="light">
-        <ion-label>Mis productos</ion-label>
-      </ion-item>
+<ion-accordion-group>
+  <ion-accordion value="productos">
+    <ion-item slot="header" color="light">
+      <ion-label>Mis productos</ion-label>
+    </ion-item>
 
-      <div slot="content">
-        <div class="products-grid">
-          @for (p of products; track p.id) {
-          <div class="product-card">
-            <div class="thumb">
-              <img
-                [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
-                alt="{{ p.name }}" />
-            </div>
-            <div class="details">
-              <h4>{{ p.name }}</h4>
-              <div class="info-row">
-                <span class="likes" [attr.aria-label]="'Cantidad de likes: ' + p.likes_count">
-                  <ion-icon name="heart"></ion-icon> {{ p.likes_count }}
-                </span>
-                <span class="status" [class.disponible]="p.status === 'disponible'"
-                  [class.intercambiado]="p.status === 'intercambiado'">
-                  {{ p.status | titlecase }}
-                </span>
-              </div>
+    <div slot="content">
+      <div class="products-grid">
+        @for (p of products; track p.id) {
+        <div class="product-card" (click)="goToProductDetail(p.id)">
+          <div class="thumb">
+            <img
+              [src]="(p.images?.length ? (imageBaseUrl + p.images[0].image_path) : 'https://picsum.photos/300/200?random=' + p.id)"
+              alt="{{ p.name }}" />
+          </div>
+          <div class="details">
+            <h4>{{ p.name }}</h4>
+            <div class="info-row">
+              <span class="likes" [attr.aria-label]="'Cantidad de likes: ' + p.likes_count">
+                <ion-icon name="heart"></ion-icon> {{ p.likes_count }}
+              </span>
+              <span class="status" [class.disponible]="p.status === 'disponible'"
+                [class.intercambiado]="p.status === 'intercambiado'">
+                {{ p.status | titlecase }}
+              </span>
             </div>
           </div>
-          }
-
-          @if (!products.length) {
-          <div class="empty">
-            <ion-icon name="cube-outline"></ion-icon>
-            <p>Aún no has publicado productos</p>
-          </div>
-          }
         </div>
+        }
+
+        @if (!products.length) {
+        <div class="empty">
+          <ion-icon name="cube-outline"></ion-icon>
+          <p>Aún no has publicado productos</p>
+        </div>
+        }
       </div>
-    </ion-accordion>
-  </ion-accordion-group>
+    </div>
+  </ion-accordion>
+</ion-accordion-group>
+
 
 
 

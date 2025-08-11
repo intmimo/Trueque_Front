@@ -291,4 +291,8 @@ loadLikedProducts(userId: number) {
     });
 }
 
+  // Navegar al detalle del producto
+  goToProductDetail(productId: number) {
+    this.router.navigate(['/product-detail', productId]);
+  }
 }
