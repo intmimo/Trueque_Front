@@ -56,4 +56,11 @@ private getAuthHeaders(): HttpHeaders {
   );
 }
 
+getUserRatingHistory(toUserId: number): Observable<any> {
+  return this.http.get(
+    `${this.apiUrl}/rating/history/${toUserId}`,
+    { headers: this.getAuthHeaders() }
+  );
+}
+
 }

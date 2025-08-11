@@ -17,9 +17,6 @@ export class Tab1Page implements OnInit {
 
   user: any;
   products: any[] = [];
-  likes: any[] = [];           // si lo usas
-  likesRecibidos: any[] = [];  // si lo usas
-  showLikes: boolean = false;
 
   // ⭐ Rating
   ratingAvg = 0;
@@ -58,6 +55,7 @@ export class Tab1Page implements OnInit {
           this.getUserProducts(this.user.id);
           this.cargarMisProductos();
           this.loadRatings(this.user.id);
+          this.loadRatingHistory(this.user.id);
         }
       },
       error: (err) => console.error('Error al cargar perfil:', err)
@@ -268,4 +266,17 @@ export class Tab1Page implements OnInit {
       (container as HTMLElement).style.width = '100vw';
     }
   }
+
+  // ⭐ Cargar historial completo de calificaciones
+loadRatingHistory(userId: number) {
+  this.ratingService.getUserRatingHistory(userId).subscribe({
+    next: (res) => {
+      console.log('Historial de ratings:', res);
+      this.ratings = res.ratings;  // Aquí sí hay lista de calificaciones
+    },
+    error: (err) => console.error('Error al cargar historial de ratings:', err)
+  });
+}
+
+
 }
